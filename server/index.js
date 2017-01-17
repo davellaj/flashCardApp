@@ -16,7 +16,7 @@ const jsonParser = bodyParser.json()
 
 app.use(express.static(process.env.CLIENT_PATH));
 
-app.get('/flashCard', (req,res)=>{
+app.get('/flashCards', (req,res)=>{
     Dictionary.find({})
     .then(words => {
         return res.status(200).json(words)
@@ -30,8 +30,8 @@ function runServer() {
     return new Promise((resolve, reject) => {
         mongoose.connect(DATABASE_URL, err => {
             if (err) {
-            return reject(err);
-        }
+                return reject(err);
+            }
         app.listen(PORT, HOST, (err) => {
             if (err) {
                 console.error(err);
@@ -42,7 +42,7 @@ function runServer() {
             console.log(`Listening on ${host}:${PORT}`);
         });
     });
-}
+})}
 
 if (require.main === module) {
     runServer();
