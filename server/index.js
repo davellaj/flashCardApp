@@ -20,7 +20,6 @@ app.use(jsonParser)
 
 // get for logged in users database info
 app.get('/flashCards/:id', (req,res)=>{
-    console.log(req.params)
     User.findById(req.params.id)
     .then(userObj => {
         return res.status(200).json(userObj)
@@ -30,31 +29,17 @@ app.get('/flashCards/:id', (req,res)=>{
     })
 })
 
-// post to add a flashCard, not necessary for current game
-app.post('/flashCards', (req, res) => {
-    let word = new Dictionary()
-    word.english = req.body.english
-    word.german = req.body.german
+//Update a users word and mValue
+// app.put('/flashCards/:id', (req, res) => {
+//     //in body send the wordId req.body.word and the new mValue req.body.mValue
+//     User.findOneAndUpdate({_id: req.params.id}, $set: {req.body.word})
+// })
 
-    word.save((err, word) => {
-        if(err) {
-            res.send(err)
-        }
-
-        Dictionary.find({})
-        .then(words => {
-            return res.status(200).json(words)
-        })
-        .catch(err => {
-            res.status(500).json(err)
-        })
-    })
-})
 
 //post newUser
 app.post('/users', (req, res) => {
 
-        Dictionary.find({})
+    Dictionary.find({})
         .then(words => {
             const learn = words.map(item => {
                 let word = {};
@@ -83,6 +68,26 @@ app.post('/users', (req, res) => {
     })
 })
 
+// Currently not needed: post to add a flashCard to dictionary
+app.post('/flashCards', (req, res) => {
+    let word = new Dictionary()
+    word.english = req.body.english
+    word.german = req.body.german
+
+    word.save((err, word) => {
+        if(err) {
+            res.send(err)
+        }
+
+        Dictionary.find({})
+        .then(words => {
+            return res.status(200).json(words)
+        })
+        .catch(err => {
+            res.status(500).json(err)
+        })
+    })
+})
 
 function runServer() {
     return new Promise((resolve, reject) => {
