@@ -3,9 +3,12 @@ import Dictionary from './dictionary'
 
 const Schema = mongoose.Schema;
 const userSchema = new Schema({
+  userName: {type: String, required: true},
+  level: Number,
+  questionSet: Number,
   correctCount: Number,
   words: Array,
-  userName: {type: String, required: true}
+  dictionary: Array
 })
 
 const User = mongoose.model('user', userSchema);

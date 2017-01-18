@@ -43,6 +43,16 @@ app.get('/dictionary/:wordId', (req, res)=> {
         res.status(500).json(err)
     })
 })
+// get from dictionary words with level X and questionSet X
+app.get('/dictionary', (req, res)=> {
+    Dictionary.find({level: 1, questionSet: 1})
+    .then(wordObj => {
+        return res.status(200).json(wordObj)
+    })
+    .catch(err => {
+        res.status(500).json(err)
+    })
+})
 
 //Update a users word and mValue
 app.put('/flashCards/:userId', (req, res) => {
@@ -56,7 +66,7 @@ app.put('/flashCards/:userId', (req, res) => {
     User.findById(req.params.userId)
     .then(userObj => {
         for (i=0; i<userObj.length; i++) {
-            
+
         }
         return res.status(200).json(userObj)
     })
@@ -71,7 +81,7 @@ app.put('/flashCards/:userId', (req, res) => {
 //post newUser
 app.post('/users', (req, res) => {
 
-    Dictionary.find({})
+    Dictionary.find({level: 1, questionSet: 1})
         .then(words => {
             const learn = words.map(item => {
                 let word = {};
@@ -80,12 +90,18 @@ app.post('/users', (req, res) => {
                 return word
 
             })
-            console.log(learn)
-            return learn
+            let userObj = {
+                learn: learn,
+                userDictionary: words
+            }
+            //console.log(learn)
+            return userObj
         })
-        .then((learn) => {
+        .then(userObj => {
+
             let newUser = new User()
-            newUser.words = learn
+            newUser.words = userObj.learn
+            newUser.dictionary = userObj.userDictionary
             newUser.correctCount = 0
             newUser.userName = req.body.userName
 
@@ -104,6 +120,8 @@ app.post('/users', (req, res) => {
 // Currently not needed: post to add a flashCard to dictionary
 app.post('/dictionary', (req, res) => {
     let word = new Dictionary()
+    word.level = req.body.level
+    word.questionSet = req.body.questionSet
     word.english = req.body.english
     word.german = req.body.german
 
