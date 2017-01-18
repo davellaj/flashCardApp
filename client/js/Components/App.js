@@ -2,12 +2,12 @@ import React, { Component } from 'react'
 import LandingContainer from './LandingContainer'
 import Header from './Common/Header'
 
-export class App extends Component {
+class App extends Component {
   render() {
-    return(
+    return (
       <div>
         <Header />
-        <LandingContainer />
+        {this.props.children}
       </div>
     )
   }

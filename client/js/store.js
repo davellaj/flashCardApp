@@ -3,4 +3,7 @@ import thunk from 'redux-thunk'
 import * as reducers from './Reducers'
 
 
-export default createStore(reducers.rootReducer, applyMiddleware(thunk))
+export default createStore(
+  reducers.rootReducer,
+  applyMiddleware(thunk)
+)
