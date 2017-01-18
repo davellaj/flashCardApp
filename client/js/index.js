@@ -1,11 +1,19 @@
-import 'babel-polyfill';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './Components/App';
+import { Provider } from 'react-redux';
+import { createStore, applyMiddleware } from 'redux';
+import thunk from 'redux-thunk';
 
+// import App from './components/app';
+import { Router, browserHistory } from 'react-router';
+import routes from './routes';
+import reducers from './Reducers';
 
-console.log(`Client running in ${process.env.NODE_ENV} mode`);
+const createStoreWithMiddleware = applyMiddleware(thunk)(createStore);
+
 ReactDOM.render(
-  <App />,
-  document.getElementById('app')
+  <Provider store={createStoreWithMiddleware(reducers)}>
+    <Router history={browserHistory} routes={routes} />
+  </Provider>
+  , document.getElementById('app')
 );

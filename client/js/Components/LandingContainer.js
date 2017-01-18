@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
 
 
-export class LandingContainer extends Component{
+class LandingContainer extends Component{
   render() {
-    return(
+    return (
       <div>
         <h1>German</h1>
         <button>Login</button>
