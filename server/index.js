@@ -100,10 +100,13 @@ app.post('/users', (req, res) => {
         .then(userObj => {
 
             let newUser = new User()
+            newUser.userName = req.body.userName
+            newUser.correctCount = 0
+            newUser.level = 1
+            newUser.questionSet = 1
             newUser.words = userObj.learn
             newUser.dictionary = userObj.userDictionary
-            newUser.correctCount = 0
-            newUser.userName = req.body.userName
+
 
             newUser.save((err, user) => {
                 if(err) {
