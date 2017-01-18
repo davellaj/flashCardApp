@@ -8,6 +8,6 @@ import FlashCards from './Components/FlashCards'
 export default (
   <Route path="/" component={App} >
     <IndexRoute component={FlashCards} />
-    <Route path="/question" component={LandingContainer} />
+    <Route path="question" component={LandingContainer} />
   </ Route >
 )

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { reduxForm } from 'redux-form';
-import { getQuestions, getQuestion } from '../Actions'
+import { getQuestions, getQuestion, fetchQuestions } from '../Actions'
 
 
 class FlashCards extends Component {
@@ -13,11 +13,16 @@ class FlashCards extends Component {
     this.onInputChange = this.onInputChange.bind(this)
   }
 
+  componentDidMount() {
+    console.log('Props: ', this.props)
+    this.props.fetchQuestions('587fafb3843ba0158d29ceef');
+  }
+
 
   onFormSubmit(event) {
     event.preventDefault();
     const { dictionary } = this.props.questions;
-    console.log(dictionary);
+    console.log(`dictionary: ${dictionary}`);
     // let english = dictionary
     if (this.state.term === dictionary[0].english) {
       console.log('the same')
@@ -31,8 +36,19 @@ class FlashCards extends Component {
   }
 
   showQuestion() {
-    const { dictionary } = this.props.questions;
-    return <span> {dictionary[0].german}</span>
+    console.log('showQuestion called');
+    // console.log('this.props.questions: ', this.props.questions)
+    // const { dictionary } = this.props.questions;
+    const german = this.props.questions.dictionary.map(item => {
+      console.log('german: ', item.german)
+      return item.german
+    })
+    const dictionary = this.props.questions.dictionary
+    // console.log(`dictionary: ${dictionary}`)
+    const question = german[0];
+    // console.log('question: ', question)
+    // console.log('german: ', question.german)
+    return <span> {question}</span>
   }
 
   render() {
@@ -41,7 +57,7 @@ class FlashCards extends Component {
         <form onSubmit={this.onFormSummit}>
           <h3>Translate the word</h3>
           <div>
-            <span>German: </span>
+            <span>Ray: </span>
             {this.showQuestion()}
           </div>
           <div>
@@ -72,4 +88,15 @@ const mapStateToProps = (state) => {
   return { questions: state.questions }
 }
 
-export default connect(mapStateToProps, { getQuestions, getQuestion })(FlashCards);
+const mapDispatchToProps = (dispatch) => {
+ return {
+   fetchQuestions: userId => dispatch(fetchQuestions(userId))
+   }
+}
+
+
+// const mapDispatchToProps = (dispatch) => {
+//   return { fetchQuestions }
+// }
+
+export default connect(mapStateToProps, mapDispatchToProps)(FlashCards);
