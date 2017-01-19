@@ -11,7 +11,9 @@ class LandingContainer extends Component {
       <div>
         <h1>German</h1>
         <button>Login</button>
-        <Link to='question'>FlashCards</Link>
+        <div>
+          <Link to='question'>FlashCards</Link>
+        </div>
       </div>
     )
   }
