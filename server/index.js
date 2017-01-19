@@ -88,8 +88,8 @@ passport.use(new BearerStrategy(
 
 app.get('/api/questions', passport.authenticate('bearer', { session: false }),
   (req, res) => {
-    console.log('inside router.get accessing req.user ');
-    res.json({ message: 'OK does this user object have a .questions?' });
+    console.log('inside router.get accessing req.user ', req.user);
+    res.json(req.user);
   });
 
 // get for logged in users database info

@@ -19,13 +19,13 @@ import actions from '../Actions';
 const ReducerQuestion = (state = {}, action) => {
   switch (action.type) {
     case 'GET_QUESTIONS': {
-      // const { data } = action.payload
-      const word = action.payload[0];
+      console.log('ReducerQuestion getQuestions', action.payload)
+      const word = action.payload.dictionary[0];
       return {
         ...state,
         german: word.german,
         english: word.english,
-        dictionary: action.payload
+        dictionary: action.payload.dictionary
       }
     }
     case 'RIGHT_ANSWER': {

@@ -1,13 +1,20 @@
 import actions from '../Actions';
 
 const InitialUserState = {
-  userId: '587fafb3843ba0158d29ceef',
-  userName: 'Ray Smith',
   correctSessionAnswers: 0
 }
 
-const ReducerUser = (state = InitialUserState, action) => {
+const ReducerUser = (state = {InitialUserState}, action) => {
   switch (action.type) {
+    case 'GET_QUESTIONS': {
+      console.log(`ReducerUser: ${action.payload}`)
+      return {
+        ...state,
+        userName: action.payload.userName,
+        userId: action.payload._id,
+        accessToken: action.payload.accessToken
+      }
+    }
     case 'RIGHT_ANSWER': {
       const incrementCorrect = state.correctSessionAnswers + 1;
       return { ...state, correctSessionAnswers: incrementCorrect }
