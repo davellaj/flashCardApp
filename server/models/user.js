@@ -7,6 +7,7 @@ const userSchema = new Schema({
   name: Object,
   accessToken: String,
   userName: { type: String, required: true },
+  email: Object,
   level: Number,
   questionSet: Number,
   correctCount: Number,

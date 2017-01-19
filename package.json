@@ -90,6 +90,7 @@
     "mongoose": "^4.7.7",
     "passport": "^0.3.2",
     "passport-google-oauth20": "^1.0.0",
+    "passport-http-bearer": "^1.0.1",
     "react": "^15.4.2",
     "react-dom": "^15.4.2",
     "react-redux": "^5.0.2",
