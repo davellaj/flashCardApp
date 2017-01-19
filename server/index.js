@@ -36,7 +36,10 @@ passport.use(new GoogleStrategy({
         // return cb(null, profile);
 
     User.findOneAndUpdate({ googleId: profile.id },
-          { $set: { name: profile.name, accessToken } },
+          { $set: {
+            name: profile.name,
+            // email: profile.emails[0],
+            accessToken } },
           { upsert: true, new: true })
           .then(user => {
               cb(null, user);
@@ -47,7 +50,7 @@ passport.use(new GoogleStrategy({
   ));
 
 app.get('/auth/google',
-  passport.authenticate('google', { scope: ['profile'] }));
+  passport.authenticate('google', { scope: ['profile', 'email'] }));
 
 app.get('/auth/google/callback',
   passport.authenticate('google', { failureRedirect: '/', session: false }),
