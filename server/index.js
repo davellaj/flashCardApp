@@ -33,9 +33,9 @@ app.get('/flashCards/:userId', (req, res) => {
     });
 });
 
-
 // get from dictionary words with level X and questionSet X
 app.get('/dictionary', (req, res) => {
+  // eventually will need to make level and questionSet values variables
     Dictionary.find({ level: 1, questionSet: 1 })
     .then(wordObj => {
         // console.log('wordObj: ', wordObj)
@@ -50,24 +50,20 @@ app.get('/dictionary', (req, res) => {
 app.put('/flashCards/:userId', (req, res) => {
     // could potentialy do algorithm computation here but for now will assume
     // it is done on the frontend and frontend sends in body of put request
-    // the wordId and computed mValue
-    // also send me index value of the word
-    const wordId = req.body.word;
-    const mValue = req.body.mValue;
-    //find logged in user
-    User.findById(req.params.userId)
-    .then(userObj => {
-        for (i = 0; i < userObj.length; i++) {
+    // level and set the user has accomplished after their session
 
-        }
-        return res.status(200).json(userObj);
+    //find logged in user then update level and questionSet
+    User.findByIdAndUpdate(req.params.userId,
+    { $set: { level: req.body.level, questionSet: req.body.questionSet } }, { new: true })
+    .then(updateObj => {
+        return res.status(200).json(updateObj);
     })
     .catch(err => {
         res.status(500).json(err);
     });
+});
     //in body send the wordId req.body.word and the new mValue req.body.mValue
     // User.findOneAndUpdate({_id: req.params.id}, $set: {req.body.word})
-});
 
 //post newUser
 app.post('/users', (req, res) => {
