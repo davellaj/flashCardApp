@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { Link } from 'react-router'
 import { fetchQuestions, rightAnswer, wrongAnswer } from '../Actions'
 
 class FlashCards extends Component {
@@ -32,6 +33,7 @@ class FlashCards extends Component {
   render() {
     return (
       <div>
+        < Link to='question'>Question</Link>
         <form onSubmit={this.onFormSubmit}>
           <h3>Translate the word</h3>
           <div>
