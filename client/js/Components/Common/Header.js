@@ -3,7 +3,7 @@ import React from 'react';
 const Header = () => {
   return (
     <div>
-      <h1>English/German Flashcards</h1>
+      <h1>English/Ray Translation</h1>
     </div>
   )
 }

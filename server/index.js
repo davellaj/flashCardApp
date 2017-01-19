@@ -1,81 +1,86 @@
 import 'babel-polyfill';
 import express from 'express';
-import mongoose from 'mongoose'
-import Dictionary from '../models/dictionary'
-import User from '../models/user'
-import bodyParser from 'body-parser'
+import mongoose from 'mongoose';
+import bodyParser from 'body-parser';
+import Dictionary from '../models/dictionary';
+import User from '../models/user';
 
 const HOST = process.env.HOST;
 const PORT = process.env.PORT || 8080;
-const DATABASE_URL = 'mongodb://german:german@ds119748.mlab.com:19748/german'
+const DATABASE_URL = 'mongodb://german:german@ds119748.mlab.com:19748/german';
 
 
 console.log(`Server running in ${process.env.NODE_ENV} mode`);
 
 const app = express();
-const jsonParser = bodyParser.json()
+const jsonParser = bodyParser.json();
 
 app.use(express.static(process.env.CLIENT_PATH));
-app.use(jsonParser)
+app.use(jsonParser);
 
 // get for logged in users database info
 // return the userObj that has the users array of words and correctCount
-app.get('/flashCards/:userId', (req,res)=> {
-    User.findById(req.params.userId)
+app.get('/flashCards/:userId', (req, res) => {
+    const userId = '587fafb3843ba0158d29ceef';
+    // User.findById(req.params.userId)
+    User.findById(userId)
     .then(userObj => {
-        return res.status(200).json(userObj)
+        console.log(userObj)
+        return res.status(200).json(userObj);
     })
     .catch(err => {
-        res.status(500).json(err)
-    })
-})
+        res.status(500).json(err);
+    });
+});
 
 // get dictionary word to display
 //return word object with english and german versions of that one word
 // needs to be passed in params the wordId (which is the key of whatever
-//word the user is on in their array of words) // bad efficiency if server is pinged for every render of new word???
-app.get('/dictionary/:wordId', (req, res)=> {
+// word the user is on in their array of words) // bad efficiency if server is
+// pinged for every render of new word???
+app.get('/dictionary/:wordId', (req, res) => {
     Dictionary.findById(req.params.wordId)
     .then(wordObj => {
-        return res.status(200).json(wordObj)
+        return res.status(200).json(wordObj);
     })
     .catch(err => {
-        res.status(500).json(err)
-    })
-})
+        res.status(500).json(err);
+    });
+});
 // get from dictionary words with level X and questionSet X
-app.get('/dictionary', (req, res)=> {
-    Dictionary.find({level: 1, questionSet: 1})
+app.get('/dictionary', (req, res) => {
+    Dictionary.find({ level: 1, questionSet: 1 })
     .then(wordObj => {
-        return res.status(200).json(wordObj)
+        // console.log('wordObj: ', wordObj)
+        return res.status(200).json(wordObj);
     })
     .catch(err => {
-        res.status(500).json(err)
-    })
-})
+        res.status(500).json(err);
+    });
+});
 
-//Update a users word and mValue
-app.put('/flashCards/:userId', (req, res) => {
-    // could potentialy do algorithm computation here but for now will assume
-    // it is done on the frontend and frontend sends in body of put request
-    // the wordId and computed mValue
-    // also send me index value of the word
-    let wordId = req.body.word
-    let mValue = req.body.mValue
-    //find logged in user
-    User.findById(req.params.userId)
-    .then(userObj => {
-        for (i=0; i<userObj.length; i++) {
-
-        }
-        return res.status(200).json(userObj)
-    })
-    .catch(err => {
-        res.status(500).json(err)
-    })
-    //in body send the wordId req.body.word and the new mValue req.body.mValue
-    // User.findOneAndUpdate({_id: req.params.id}, $set: {req.body.word})
-})
+// //Update a users word and mValue
+// app.put('/flashCards/:userId', (req, res) => {
+//     // could potentialy do algorithm computation here but for now will assume
+//     // it is done on the frontend and frontend sends in body of put request
+//     // the wordId and computed mValue
+//     // also send me index value of the word
+//     let wordId = req.body.word;
+//     let mValue = req.body.mValue;
+//     //find logged in user
+//     User.findById(req.params.userId)
+//     .then(userObj => {
+//         for (i=0; i<userObj.length; i++) {
+//
+//         }
+//         return res.status(200).json(userObj)
+//     })
+//     .catch(err => {
+//         res.status(500).json(err)
+//     })
+//     //in body send the wordId req.body.word and the new mValue req.body.mValue
+//     // User.findOneAndUpdate({_id: req.params.id}, $set: {req.body.word})
+// })
 
 
 //post newUser
