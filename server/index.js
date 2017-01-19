@@ -1,9 +1,14 @@
+//apiClientId: 1038166029559 - ta5qgkk3f266l4dn1tjiqt733mteek69.apps.googleusercontent.com
+//apiSecret: -F_e6UnBiwcHpQNFtd81qdxG
+
 import 'babel-polyfill';
 import express from 'express';
 import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 import Dictionary from './models/dictionary';
 import User from './models/user';
+import GoogleStrategy from 'passport-google-oauth20';
+import passport from 'passport';
 
 const HOST = process.env.HOST;
 const PORT = process.env.PORT || 8080;
@@ -17,6 +22,41 @@ const jsonParser = bodyParser.json();
 
 app.use(express.static(process.env.CLIENT_PATH));
 app.use(jsonParser);
+
+//google auth
+
+passport.use(new GoogleStrategy({
+    clientID: '1038166029559-ta5qgkk3f266l4dn1tjiqt733mteek69.apps.googleusercontent.com',
+    clientSecret: '-F_e6UnBiwcHpQNFtd81qdxG',
+    callbackURL: 'http://localhost:8080/auth/google/callback'
+  },
+  (accessToken, refreshToken, profile, cb) => {
+    console.log('access token ', accessToken);
+    console.log('profile ', profile);
+        // return cb(null, profile);
+
+    User.findOneAndUpdate({ googleId: profile.id },
+          { $set: { name: profile.name, accessToken } },
+          { upsert: true, new: true })
+          .then(user => {
+              cb(null, user);
+          }).catch(() => {
+              console.log('catch error');
+          });
+    }
+  ));
+
+app.get('/auth/google',
+  passport.authenticate('google', { scope: ['profile'] }));
+
+app.get('/auth/google/callback',
+  passport.authenticate('google', { failureRedirect: '/', session: false }),
+  (req, res) => {
+    res.cookie('accessToken', req.user.accessToken, { expires: 0, httpOnly: false });
+    // Successful authentication, redirect home.
+    res.redirect('/');
+  });
+
 
 // get for logged in users database info
 // return the userObj that has the users array of words and correctCount

@@ -3,6 +3,9 @@ import Dictionary from './dictionary';
 
 const Schema = mongoose.Schema;
 const userSchema = new Schema({
+  googleId: String,
+  name: Object,
+  accessToken: String,
   userName: { type: String, required: true },
   level: Number,
   questionSet: Number,
