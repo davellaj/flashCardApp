@@ -3,7 +3,7 @@ import { combineReducers } from 'redux'
 import ReducerQuestions from './ReducerQuestions'
 
 const rootReducer = combineReducers({
-  questions: ReducerQuestions,
+  dictionary: ReducerQuestions,
 })
 
 export default rootReducer

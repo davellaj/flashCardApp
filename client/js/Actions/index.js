@@ -9,7 +9,7 @@ export const getQuestions = (data) => ({
 // test userId: 587fafb3843ba0158d29ceef
 export const fetchQuestions = userId => dispatch => {
   console.log('dispatch fetchQuestions');
-  const url = `/flashCards/${userId}`
+  const url = '/dictionary'
   return fetch(url)
   .then(response => {
     if (!response.ok) {
@@ -20,7 +20,7 @@ export const fetchQuestions = userId => dispatch => {
     return response;
   })
   .then(response => response.json())
-  // .then(data => console.log('fetch: ', data.dictionary))
+  // .then(data => console.log('fetch: ', data))
   .then(data => dispatch(getQuestions(data)))
   .catch(error => console.log(error))
 }

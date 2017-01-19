@@ -1,20 +1,20 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { reduxForm } from 'redux-form';
-import { getQuestions, getQuestion, fetchQuestions } from '../Actions'
+import { fetchQuestions } from '../Actions'
 
 
 class FlashCards extends Component {
 
   constructor(props) {
     super(props)
-    this.state = { term: '' }
+    // this.state = { term: '' }
     this.onFormSubmit = this.onFormSubmit.bind(this)
     this.onInputChange = this.onInputChange.bind(this)
   }
 
   componentDidMount() {
-    console.log('Props: ', this.props)
+    // console.log('Props: ', this.props)
     this.props.fetchQuestions('587fafb3843ba0158d29ceef');
   }
 
@@ -38,14 +38,14 @@ class FlashCards extends Component {
   showQuestion() {
     console.log('showQuestion called');
     // console.log('this.props.questions: ', this.props.questions)
-    // const { dictionary } = this.props.questions;
-    const german = this.props.questions.dictionary.map(item => {
-      console.log('german: ', item.german)
-      return item.german
-    })
-    const dictionary = this.props.questions.dictionary
+    const { dictionary } = this.props;
+    // const german = this.props.questions.dictionary.map(item => {
+    //   console.log('german: ', item.german)
+    //   return item.german
+    // })
+    // const dictionary = this.props.questions.dictionary
     // console.log(`dictionary: ${dictionary}`)
-    const question = german[0];
+    const question = dictionary;
     // console.log('question: ', question)
     // console.log('german: ', question.german)
     return <span> {question}</span>
@@ -66,8 +66,6 @@ class FlashCards extends Component {
               type="text"
               placeholder="enter the English word"
               className="form-control"
-              value={this.state.term}
-              onChange={this.onInputChange}
             />
           </div>
           <button
@@ -82,10 +80,12 @@ class FlashCards extends Component {
     )
   }
 }
+// value={this.state.term}
+// onChange={this.onInputChange}
 
 const mapStateToProps = (state) => {
-  // console.log(state.questions);
-  return { questions: state.questions }
+  console.log('state: ', state);
+  return { dictionary: state.dictionary }
 }
 
 const mapDispatchToProps = (dispatch) => {
@@ -93,10 +93,5 @@ const mapDispatchToProps = (dispatch) => {
    fetchQuestions: userId => dispatch(fetchQuestions(userId))
    }
 }
-
-
-// const mapDispatchToProps = (dispatch) => {
-//   return { fetchQuestions }
-// }
 
 export default connect(mapStateToProps, mapDispatchToProps)(FlashCards);

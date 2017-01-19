@@ -13,29 +13,18 @@ const InitialState = {
   words: []
 }
 
-export default (state = InitialState, action) => {
+export default (state = [], action) => {
   switch (action.type) {
     case 'GET_QUESTIONS':
-      // console.log(`GET_QUESTIONS: ${action.payload._id}`)
-      // const userId = action.payload._id
-      // const userName = action.payload.userName
-      // const level = action.payload.level
-      // const questionSet = action.payload.questionSet
-      // const correctCount = action.payload.correctCount
-      const dictionary = action.payload.dictionary
-      // const words = action.payload.words
-      console.log(`action: ${dictionary}`)
+      // const { data } = action.payload
+      // console.log('action: ', action.payload)
       return {
-        ...state,
-        // userId,
-        // userName,
-        // level,
-        // questionSet,
-        // correctCount,
-        dictionary
-        // words
+        ...state, state: action.payload
       }
 
+    case 'GET_USER':
+
+      return { ...state }
     default:
       return state;
   }

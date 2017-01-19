@@ -51,6 +51,7 @@ app.get('/dictionary/:wordId', (req, res) => {
 app.get('/dictionary', (req, res) => {
     Dictionary.find({ level: 1, questionSet: 1 })
     .then(wordObj => {
+        // console.log('wordObj: ', wordObj)
         return res.status(200).json(wordObj);
     })
     .catch(err => {
