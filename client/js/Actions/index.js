@@ -25,13 +25,12 @@ export const fetchQuestions = userId => dispatch => {
   .catch(error => console.log(error))
 }
 
-export const GET_QUESTION = 'GET_QUESTION';
-export const getQuestion = () => ({
-  type: GET_QUESTION
+export const WRONG_ANSWER = 'WRONG_ANSWER';
+export const wrongAnswer = () => ({
+  type: WRONG_ANSWER
 })
 
-export const UPDATE_MEMORY = 'UPDATE_MEMORY';
-export const updateMemory = (index) => ({
-  type: updateMemory,
-  data: index
+export const RIGHT_ANSWER = 'RIGHT_ANSWER';
+export const rightAnswer = () => ({
+  type: RIGHT_ANSWER
 })
