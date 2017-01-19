@@ -9,6 +9,7 @@ import Dictionary from './models/dictionary';
 import User from './models/user';
 import GoogleStrategy from 'passport-google-oauth20';
 import passport from 'passport';
+import BearerStrategy from 'passport-http-bearer';
 
 const HOST = process.env.HOST;
 const PORT = process.env.PORT || 8080;
@@ -23,22 +24,31 @@ const jsonParser = bodyParser.json();
 app.use(express.static(process.env.CLIENT_PATH));
 app.use(jsonParser);
 
-//google auth
+mongoose.Promise = global.Promise;
 
+//google auth
 passport.use(new GoogleStrategy({
     clientID: '1038166029559-ta5qgkk3f266l4dn1tjiqt733mteek69.apps.googleusercontent.com',
     clientSecret: '-F_e6UnBiwcHpQNFtd81qdxG',
     callbackURL: 'http://localhost:8080/auth/google/callback'
   },
   (accessToken, refreshToken, profile, cb) => {
-    console.log('access token ', accessToken);
-    console.log('profile ', profile);
+    //console.log('access token ', accessToken);
+    //console.log('profile ', profile);
         // return cb(null, profile);
-
     User.findOneAndUpdate({ googleId: profile.id },
-          { $set: { name: profile.name, accessToken } },
+          {
+            $set: {
+              googleId: profile.id,
+              name: profile.name,
+              userName: profile.displayName,
+              // email: profile.emails[0].value,
+              accessToken
+            }
+          },
           { upsert: true, new: true })
           .then(user => {
+            console.log('user authenticated ', user);
               cb(null, user);
           }).catch(() => {
               console.log('catch error');
@@ -47,16 +57,40 @@ passport.use(new GoogleStrategy({
   ));
 
 app.get('/auth/google',
-  passport.authenticate('google', { scope: ['profile'] }));
+  passport.authenticate('google', { scope: ['profile', 'email'] }));
 
 app.get('/auth/google/callback',
   passport.authenticate('google', { failureRedirect: '/', session: false }),
   (req, res) => {
     res.cookie('accessToken', req.user.accessToken, { expires: 0, httpOnly: false });
     // Successful authentication, redirect home.
-    res.redirect('/');
+    res.redirect('/#/question');
   });
 
+// access token for jamie 'ya29.GlvYA8JmSJ0fxe7K-95ThhJaeyezRaHXSVONQgiC_xOyoYnWB7MJJS2RfQO4oscbPr2Aq_SHzgvMxTmaMJWLidvPdeBI7DVkOwLmjLUCFTr-hgAMk3aRuPzUisnY'
+// passport bearer Strategy
+
+const router = express.Router();
+
+passport.use(new BearerStrategy(
+  (accessToken, done) => {
+    console.log(accessToken);
+    User.findOne({
+      accessToken
+    }).then(user => {
+      console.log('this is bearer strategy ', user);
+      done(null, user, { scope: 'read' });
+    }).catch(err => {
+      done(err, null);
+    });
+  }
+));
+
+app.get('/api/questions', passport.authenticate('bearer', { session: false }),
+  (req, res) => {
+    console.log('inside router.get accessing req.user ');
+    res.json({ message: 'OK does this user object have a .questions?' });
+  });
 
 // get for logged in users database info
 // return the userObj that has the users array of words and correctCount

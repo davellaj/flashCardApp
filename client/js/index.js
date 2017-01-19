@@ -7,7 +7,7 @@ import thunk from 'redux-thunk';
 
 import App from './Components/App';
 import LandingContainer from './Components/LandingContainer';
-import FlashCards from './Components/FlashCards'
+import FlashCards from './Components/FlashCards';
 
 // import routes from './routes';
 import reducers from './Reducers';
@@ -16,7 +16,7 @@ const createStoreWithMiddleware = applyMiddleware(thunk)(createStore);
 
 ReactDOM.render(
   <Provider store={createStoreWithMiddleware(reducers)}>
-    <Router history={browserHistory}>
+    <Router history={hashHistory}>
       <Route path="/" component={App} >
         <IndexRoute component={LandingContainer} />
         <Route path="/question" component={FlashCards} />
