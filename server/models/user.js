@@ -1,15 +1,15 @@
-import mongoose from 'mongoose'
-import Dictionary from './dictionary'
+import mongoose from 'mongoose';
+import Dictionary from './dictionary';
 
 const Schema = mongoose.Schema;
 const userSchema = new Schema({
-  userName: {type: String, required: true},
+  userName: { type: String, required: true },
   level: Number,
   questionSet: Number,
   correctCount: Number,
   words: Array,
   dictionary: Array
-})
+});
 
 const User = mongoose.model('user', userSchema);
 module.exports = User;

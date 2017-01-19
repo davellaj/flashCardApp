@@ -2,8 +2,8 @@ import 'babel-polyfill';
 import express from 'express';
 import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
-import Dictionary from '../models/dictionary';
-import User from '../models/user';
+import Dictionary from './models/dictionary';
+import User from './models/user';
 
 const HOST = process.env.HOST;
 const PORT = process.env.PORT || 8080;
@@ -25,7 +25,7 @@ app.get('/flashCards/:userId', (req, res) => {
     // User.findById(req.params.userId)
     User.findById(userId)
     .then(userObj => {
-        console.log(userObj)
+        console.log(userObj);
         return res.status(200).json(userObj);
     })
     .catch(err => {
@@ -85,68 +85,65 @@ app.get('/dictionary', (req, res) => {
 
 //post newUser
 app.post('/users', (req, res) => {
-
-    Dictionary.find({level: 1, questionSet: 1})
+    Dictionary.find({ level: 1, questionSet: 1 })
         .then(words => {
             const learn = words.map(item => {
-                let word = {};
+                const word = {};
 
                 word[item._id] = 1;
-                return word
-
-            })
-            let userObj = {
-                learn: learn,
+                return word;
+            });
+            const userObj = {
+                learn,
                 userDictionary: words
-            }
+            };
             //console.log(learn)
-            return userObj
+            return userObj;
         })
         .then(userObj => {
-
-            let newUser = new User()
-            newUser.userName = req.body.userName
-            newUser.correctCount = 0
-            newUser.level = 1
-            newUser.questionSet = 1
-            newUser.words = userObj.learn
-            newUser.dictionary = userObj.userDictionary
+            const newUser = new User();
+            newUser.userName = req.body.userName;
+            newUser.correctCount = 0;
+            newUser.level = 1;
+            newUser.questionSet = 1;
+            newUser.words = userObj.learn;
+            newUser.dictionary = userObj.userDictionary;
 
 
             newUser.save((err, user) => {
-                if(err) {
-                    res.send(err)
+                if (err) {
+                    res.send(err);
                 }
-                return res.status(200).json(newUser)
+                return res.status(200).json(newUser);
         })
         .catch(err => {
-            res.status(500).json(err)
-        })
-    })
-})
+            res.status(500).json(err);
+        });
+    });
+});
 
 // Currently not needed: post to add a flashCard to dictionary
 app.post('/dictionary', (req, res) => {
-    let word = new Dictionary()
-    word.level = req.body.level
-    word.questionSet = req.body.questionSet
-    word.english = req.body.english
-    word.german = req.body.german
+    const word = new Dictionary();
+    word.level = req.body.level;
+    word.questionSet = req.body.questionSet;
+    word.english = req.body.english;
+    word.german = req.body.german;
 
     word.save((err, word) => {
-        if(err) {
-            res.send(err)
+        if (err) {
+            res.send(err);
         }
 
         Dictionary.find({})
         .then(words => {
-            return res.status(200).json(words)
+            return res.status(200).json(words);
         })
         .catch(err => {
-            res.status(500).json(err)
-        })
-    })
-})
+            res.status(500).json(err);
+        });
+    });
+});
 
 function runServer() {
     return new Promise((resolve, reject) => {
@@ -164,7 +161,8 @@ function runServer() {
             console.log(`Listening on ${host}:${PORT}`);
         });
     });
-})}
+});
+}
 
 if (require.main === module) {
     runServer();
