@@ -33,20 +33,7 @@ app.get('/flashCards/:userId', (req, res) => {
     });
 });
 
-// get dictionary word to display
-//return word object with english and german versions of that one word
-// needs to be passed in params the wordId (which is the key of whatever
-// word the user is on in their array of words) // bad efficiency if server is
-// pinged for every render of new word???
-app.get('/dictionary/:wordId', (req, res) => {
-    Dictionary.findById(req.params.wordId)
-    .then(wordObj => {
-        return res.status(200).json(wordObj);
-    })
-    .catch(err => {
-        res.status(500).json(err);
-    });
-});
+
 // get from dictionary words with level X and questionSet X
 app.get('/dictionary', (req, res) => {
     Dictionary.find({ level: 1, questionSet: 1 })
@@ -59,29 +46,28 @@ app.get('/dictionary', (req, res) => {
     });
 });
 
-// //Update a users word and mValue
-// app.put('/flashCards/:userId', (req, res) => {
-//     // could potentialy do algorithm computation here but for now will assume
-//     // it is done on the frontend and frontend sends in body of put request
-//     // the wordId and computed mValue
-//     // also send me index value of the word
-//     let wordId = req.body.word;
-//     let mValue = req.body.mValue;
-//     //find logged in user
-//     User.findById(req.params.userId)
-//     .then(userObj => {
-//         for (i=0; i<userObj.length; i++) {
-//
-//         }
-//         return res.status(200).json(userObj)
-//     })
-//     .catch(err => {
-//         res.status(500).json(err)
-//     })
-//     //in body send the wordId req.body.word and the new mValue req.body.mValue
-//     // User.findOneAndUpdate({_id: req.params.id}, $set: {req.body.word})
-// })
+//Update a users word and mValue
+app.put('/flashCards/:userId', (req, res) => {
+    // could potentialy do algorithm computation here but for now will assume
+    // it is done on the frontend and frontend sends in body of put request
+    // the wordId and computed mValue
+    // also send me index value of the word
+    const wordId = req.body.word;
+    const mValue = req.body.mValue;
+    //find logged in user
+    User.findById(req.params.userId)
+    .then(userObj => {
+        for (i = 0; i < userObj.length; i++) {
 
+        }
+        return res.status(200).json(userObj);
+    })
+    .catch(err => {
+        res.status(500).json(err);
+    });
+    //in body send the wordId req.body.word and the new mValue req.body.mValue
+    // User.findOneAndUpdate({_id: req.params.id}, $set: {req.body.word})
+});
 
 //post newUser
 app.post('/users', (req, res) => {
@@ -119,6 +105,21 @@ app.post('/users', (req, res) => {
         .catch(err => {
             res.status(500).json(err);
         });
+    });
+});
+
+// currently not needed: get dictionary word to display
+//return word object with english and german versions of that one word
+// needs to be passed in params the wordId (which is the key of whatever
+// word the user is on in their array of words) // bad efficiency if server is
+// pinged for every render of new word???
+app.get('/dictionary/:wordId', (req, res) => {
+    Dictionary.findById(req.params.wordId)
+    .then(wordObj => {
+        return res.status(200).json(wordObj);
+    })
+    .catch(err => {
+        res.status(500).json(err);
     });
 });
 
