@@ -1,64 +1,42 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { reduxForm } from 'redux-form';
-import { fetchQuestions } from '../Actions'
-
+import { fetchQuestions, rightAnswer, wrongAnswer } from '../Actions'
 
 class FlashCards extends Component {
 
   constructor(props) {
     super(props)
-    // this.state = { term: '' }
+    this.state = { term: '' }
     this.onFormSubmit = this.onFormSubmit.bind(this)
     this.onInputChange = this.onInputChange.bind(this)
   }
 
   componentDidMount() {
-    // console.log('Props: ', this.props)
     this.props.fetchQuestions('587fafb3843ba0158d29ceef');
   }
 
-
   onFormSubmit(event) {
     event.preventDefault();
-    const { dictionary } = this.props.questions;
-    console.log(`dictionary: ${dictionary}`);
-    // let english = dictionary
-    if (this.state.term === dictionary[0].english) {
-      console.log('the same')
+    if (this.state.term === this.props.english) {
+      this.props.rightAnswer();
     } else {
-      console.log('wrong')
+      this.props.wrongAnswer();
     }
+    this.setState({ term: '' });
   }
 
   onInputChange(event) {
     this.setState({ term: event.target.value })
   }
 
-  showQuestion() {
-    console.log('showQuestion called');
-    // console.log('this.props.questions: ', this.props.questions)
-    const { dictionary } = this.props;
-    // const german = this.props.questions.dictionary.map(item => {
-    //   console.log('german: ', item.german)
-    //   return item.german
-    // })
-    // const dictionary = this.props.questions.dictionary
-    // console.log(`dictionary: ${dictionary}`)
-    const question = dictionary;
-    // console.log('question: ', question)
-    // console.log('german: ', question.german)
-    return <span> {question}</span>
-  }
-
   render() {
     return (
       <div>
-        <form onSubmit={this.onFormSummit}>
+        <form onSubmit={this.onFormSubmit}>
           <h3>Translate the word</h3>
           <div>
             <span>Ray: </span>
-            {this.showQuestion()}
+            {this.props.german}
           </div>
           <div>
             <span>English: </span>
@@ -66,6 +44,8 @@ class FlashCards extends Component {
               type="text"
               placeholder="enter the English word"
               className="form-control"
+              value={this.state.term}
+              onChange={this.onInputChange}
             />
           </div>
           <button
@@ -80,17 +60,19 @@ class FlashCards extends Component {
     )
   }
 }
-// value={this.state.term}
-// onChange={this.onInputChange}
 
 const mapStateToProps = (state) => {
-  console.log('state: ', state);
-  return { dictionary: state.dictionary }
+  return {
+    german: state.questions.german,
+    english: state.questions.english
+  }
 }
 
 const mapDispatchToProps = (dispatch) => {
  return {
-   fetchQuestions: userId => dispatch(fetchQuestions(userId))
+   fetchQuestions: userId => dispatch(fetchQuestions(userId)),
+   rightAnswer: () => dispatch(rightAnswer()),
+   wrongAnswer: () => dispatch(wrongAnswer())
    }
 }
 
