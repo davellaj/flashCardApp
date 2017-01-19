@@ -16,7 +16,7 @@ import actions from '../Actions';
 //   words: []
 // }
 
-export default (state = {}, action) => {
+const ReducerQuestion = (state = {}, action) => {
   switch (action.type) {
     case 'GET_QUESTIONS': {
       // const { data } = action.payload
@@ -59,3 +59,5 @@ export default (state = {}, action) => {
       return state;
   }
 }
+
+export default ReducerQuestion;

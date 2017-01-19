@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { Link } from 'react-router'
 import { fetchQuestions, rightAnswer, wrongAnswer } from '../Actions'
 
 class FlashCards extends Component {
@@ -12,7 +13,7 @@ class FlashCards extends Component {
   }
 
   componentDidMount() {
-    this.props.fetchQuestions('587fafb3843ba0158d29ceef');
+    this.props.fetchQuestions(this.props.user.userId);
   }
 
   onFormSubmit(event) {
@@ -32,6 +33,7 @@ class FlashCards extends Component {
   render() {
     return (
       <div>
+        < Link to='question'>Question</Link>
         <form onSubmit={this.onFormSubmit}>
           <h3>Translate the word</h3>
           <div>
@@ -55,7 +57,9 @@ class FlashCards extends Component {
             Submit
           </button>
         </form>
-
+        <div>
+          <p>Session Score: <strong>{this.props.user.correctSessionAnswers}</strong></p>
+        </div>
       </div>
     )
   }
@@ -64,7 +68,8 @@ class FlashCards extends Component {
 const mapStateToProps = (state) => {
   return {
     german: state.questions.german,
-    english: state.questions.english
+    english: state.questions.english,
+    user: state.user
   }
 }
 
