@@ -41,8 +41,9 @@ export const getQuestionSet = (data) => ({
   payload: data
 })
 
-export const fetchQuesionSet = (userId, sessionComplete) => dispatch => {
-  const url = '/api/questionSet'
+export const fetchQuestionSet = (userId, sessionComplete) => dispatch => {
+  const url = `/api/questionSet/${userId}/${sessionComplete}`
+  console.log('fetchQuestionSet url: ', url)
   return fetch(url, {
     headers: {
       'Authorization': `Bearer ${cookie.load('accessToken')}`
@@ -57,7 +58,7 @@ export const fetchQuesionSet = (userId, sessionComplete) => dispatch => {
     return response;
   })
   .then(response => response.json())
-  // .then(data => console.log('fetch: ', data))
+  // .then(data => console.log('fetchQuestionSet: ', data))
   .then(data => dispatch(getQuestionSet(data)))
   .catch(error => console.log(error))
 }
@@ -108,4 +109,9 @@ export const wrongAnswer = () => ({
 export const RIGHT_ANSWER = 'RIGHT_ANSWER';
 export const rightAnswer = () => ({
   type: RIGHT_ANSWER
+})
+
+export const TOGGLE_SESSION_COMPLETE = 'TOGGLE_SESSION_COMPLETE';
+export const toggleSessionComplete = () => ({
+  type: TOGGLE_SESSION_COMPLETE
 })

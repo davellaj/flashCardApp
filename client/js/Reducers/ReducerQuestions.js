@@ -15,13 +15,29 @@ const ReducerQuestion = (state = {}, action) => {
         numberOfQuestions: action.payload.length
       }
     }
+
+    case 'GET_QUESTION_SET': {
+      // console.log('ReducerQuestion getQuestionSet', action.payload)
+      const word = action.payload[0];
+      return {
+        ...state,
+        german: word.german,
+        english: word.english,
+        level: word.level,
+        questionSet: word.questionSet,
+        dictionary: action.payload,
+        numberOfQuestions: action.payload.length
+      }
+    }
+
+
     case 'RIGHT_ANSWER': {
       // console.log('Action: RIGHT_ANSWER')
       let dictionaryRight = state.dictionary;
       const rightTemp = dictionaryRight.shift()
       // increment mValue
       dictionaryRight.push(rightTemp)
-      console.log('dictionaryRight', dictionaryRight)
+      // console.log('dictionaryRight', dictionaryRight)
       return { ...state,
         dictionary: dictionaryRight,
         german: dictionaryRight[0].german,
@@ -34,7 +50,7 @@ const ReducerQuestion = (state = {}, action) => {
       const wrongTemp = dictionaryWrong.shift()
       // decrement mValue
       dictionaryWrong.splice(2, 0, wrongTemp)
-      console.log('dictionaryWrong',dictionaryWrong)
+      // console.log('dictionaryWrong',dictionaryWrong)
       return {
         ...state,
         dictionary: dictionaryWrong,

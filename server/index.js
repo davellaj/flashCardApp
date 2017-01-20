@@ -105,8 +105,8 @@ app.get('/api/questionSet/:userId/:sessionComplete', passport.authenticate('bear
   (req, res) => {
     const userId = req.params.userId;
     const sessionComplete = req.params.sessionComplete;
-
-    if (sessionComplete === 'false') {
+    console.log('sessionComplete: ', sessionComplete)
+    if (sessionComplete == 'false') {
       User.findById(userId)
       .then(userObj => {
           return Dictionary.find({ level: userObj.level, questionSet: userObj.questionSet });
@@ -117,7 +117,7 @@ app.get('/api/questionSet/:userId/:sessionComplete', passport.authenticate('bear
       .catch(err => {
           return res.status(500).json(err);
       });
-    } else if (sessionComplete === 'true') {
+    } else if (sessionComplete == 'true') {
         User.findById(userId)
         .then(userObj => {
           // add logic for if questionSet is > 5 increment level by 1 and set questionSet to 1

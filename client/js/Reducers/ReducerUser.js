@@ -21,10 +21,15 @@ const ReducerUser = (state = InitialUserState, action) => {
       console.log('Action: RIGHT_ANSWER: ', state)
       return { ...state, correctSessionAnswers: incrementCorrect }
     }
-    
+
     case 'WRONG_ANSWER': {
       const decrementCorrect = state.correctSessionAnswers - 1;
       return { ...state, correctSessionAnswers: decrementCorrect }
+    }
+
+    case 'TOGGLE_SESSION_COMPLETE': {
+      const correctSessionAnswers = 0
+      return { ...state, correctSessionAnswers }
     }
 
     default:

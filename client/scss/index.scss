@@ -20,3 +20,35 @@
 .quizContainerTitle {
   text-align: center;
 }
+
+.wordContainer {
+  background-color: #EDFFEC;
+  padding: 20px;
+  text-align: center;
+}
+
+.questionWordDiv {
+  font-weight: bold;
+  font-size: 1.5em;
+}
+
+.questionWordLabel {
+  color: #19231A;
+}
+
+.answerWord {
+  text-align: center;
+}
+
+.translationInput {
+  
+  width: 200px;
+}
+
+.nextQuestion {
+  margin: 10px;
+}
+
+.saveSession {
+  margin: 10px;
+}

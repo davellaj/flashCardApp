@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router'
-import { fetchQuestions, fetchUser, rightAnswer, wrongAnswer } from '../Actions'
+import { fetchQuestions, fetchQuestionSet, fetchUser, rightAnswer, wrongAnswer, toggleSessionComplete } from '../Actions'
 
 class FlashCards extends Component {
 
@@ -14,19 +14,23 @@ class FlashCards extends Component {
 
   componentDidMount() {
     this.props.fetchUser()
-      .then(() => this.props.fetchQuestions())
-      .then(() => {
-        console.log('fetchQuestions data: ', this.props.questions)
-        console.log('fetchUser data: ', this.props.user)
-      });
+      // .then(() => this.props.fetchQuestions())
+      .then(() => this.props.fetchQuestionSet(this.props.user.userId, this.props.user.sessionComplete))
+      // .then(() => {
+      //   console.log('fetchQuestions data: ', this.props.questions)
+      //   console.log('fetchUser data: ', this.props.user)
+      // })
   }
 
   onFormSubmit(event) {
     event.preventDefault();
     if (this.state.term === this.props.english) {
       this.props.rightAnswer();
-      if (this.props.numberOfQuestions >= this.props.correctSessionAnswers) {
-        console.log('Session Complete: ', this.props.numberOfQuestions)
+      console.log('numberOfQuestions: ', this.props.numberOfQuestions)
+      console.log('correctSessionAnswers: ', this.props.user.correctSessionAnswers)
+      if ((this.props.numberOfQuestions - 1) <= this.props.user.correctSessionAnswers) {
+        this.props.toggleSessionComplete()
+        this.props.fetchQuestionSet(this.props.user.userId, true)
       }
     } else {
       this.props.wrongAnswer();
@@ -39,36 +43,40 @@ class FlashCards extends Component {
   }
 
   render() {
-    console.log('State Questions: ', this.props)
+    // console.log('State Questions: ', this.props)
     return (
       <div className="quizContainer container">
         < Link to='/'>Home</Link>
       <h3 className="quizContainerTitle">Translate the word</h3>
         <form onSubmit={this.onFormSubmit}>
-          <div className="row">
+          <div className="container wordContainer">
 
-            <div className="col-md-4">
-              <span>German: </span>
-              {this.props.german}
+            <div className="row">
+
+              <div className="col-xs-4 questionWordDiv">
+                <p className="questionWordLabel">German: </p>
+                <p className="questionWord">{this.props.german}</p>
+              </div>
+              <div className="col-xs-4 answerWord">
+                <p>English: </p>
+                <input
+                  type="text"
+                  placeholder="enter the English word"
+                  className="form-control translationInput"
+                  value={this.state.term}
+                  onChange={this.onInputChange}
+                />
+              </div>
             </div>
-            <div className="col-md-8">
-              <span>English: </span>
-              <input
-                type="text"
-                placeholder="enter the English word"
-                className="form-control"
-                value={this.state.term}
-                onChange={this.onInputChange}
-              />
-            </div>
+            <button
+              type="submit"
+              className="btn btn-sm btn-primary nextQuestion"
+            >
+              Submit
+            </button>
+            <button className="btn btn-sm btn-info saveSession">Save Session</button>
           </div>
-          <button
-            type="submit"
-            className="btn btn-sm btn-primary nextQuestion"
-          >
-            Submit
-          </button>
-          <button className="btn btn-sm btn-info saveSession">Save Session</button>
+
         </form>
         <div className="currentSession">
           <p className="sessionLevel">
@@ -97,9 +105,11 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
  return {
    fetchQuestions: () => dispatch(fetchQuestions()),
+   fetchQuestionSet: (userId, sessionComplete) => dispatch(fetchQuestionSet(userId, sessionComplete)),
    fetchUser: () => dispatch(fetchUser()),
    rightAnswer: () => dispatch(rightAnswer()),
-   wrongAnswer: () => dispatch(wrongAnswer())
+   wrongAnswer: () => dispatch(wrongAnswer()),
+   toggleSessionComplete: () => dispatch(toggleSessionComplete())
    }
 }
 
