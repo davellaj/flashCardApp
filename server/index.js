@@ -105,7 +105,6 @@ app.get('/api/questionSet/:userId/:sessionComplete', passport.authenticate('bear
   (req, res) => {
     const userId = req.params.userId;
     const sessionComplete = req.params.sessionComplete;
-    // const sessionComplete = false;
 
     if (sessionComplete === 'false') {
       User.findById(userId)
@@ -121,6 +120,7 @@ app.get('/api/questionSet/:userId/:sessionComplete', passport.authenticate('bear
     } else if (sessionComplete === 'true') {
         User.findById(userId)
         .then(userObj => {
+          // add logic for if questionSet is > 5 increment level by 1 and set questionSet to 1
           const newQuestionSet = userObj.questionSet + 1;
           return User.findByIdAndUpdate(userId,
           { $set: { questionSet: newQuestionSet } }, { new: true });
