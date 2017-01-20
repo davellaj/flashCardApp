@@ -81,7 +81,7 @@ passport.use(new BearerStrategy(
   }
 ));
 
-app.get('/api/questions', passport.authenticate('bearer', { session: false }),
+app.get('/api/users', passport.authenticate('bearer', { session: false }),
   (req, res) => {
     console.log('inside router.get accessing req.user ', req.user);
     res.json(req.user);

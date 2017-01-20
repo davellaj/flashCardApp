@@ -4,7 +4,7 @@ const InitialUserState = {
   correctSessionAnswers: 0
 }
 
-const ReducerUser = (state = InitialUserState , action) => {
+const ReducerUser = (state = InitialUserState, action) => {
   switch (action.type) {
     case 'GET_USER': {
       return {

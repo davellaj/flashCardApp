@@ -38,7 +38,7 @@ export const getUser = (data) => ({
 export const fetchUser = () => dispatch => {
   console.log('dispatch fetchQuestions');
 
-  const url = '/api/questions'
+  const url = '/api/users'
   return fetch(url, {
     headers: {
       'Authorization': `Bearer ${cookie.load('accessToken')}`

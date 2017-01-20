@@ -35,7 +35,7 @@ class FlashCards extends Component {
   render() {
     return (
       <div>
-        < Link to='/'>Question</Link>
+        < Link to='/'>Home</Link>
         <form onSubmit={this.onFormSubmit}>
           <h3>Translate the word</h3>
           <div>
