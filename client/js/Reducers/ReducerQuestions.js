@@ -1,21 +1,5 @@
 import actions from '../Actions';
 
-// const InitialState = {
-//   answerInput: '',
-//   activeQuestion: {},
-//   questionNumber: 0,
-//   userid: '',
-//   userName: '',
-//   correctCount: 0,
-//   questionSet: 1,
-//   level: 1,
-//   dictionary: [],
-//   german: '',
-//   english: '',
-//   word: {},
-//   words: []
-// }
-
 const ReducerQuestion = (state = {}, action) => {
   switch (action.type) {
     case 'GET_QUESTIONS': {
@@ -25,7 +9,10 @@ const ReducerQuestion = (state = {}, action) => {
         ...state,
         german: word.german,
         english: word.english,
-        dictionary: action.payload
+        level: word.level,
+        questionSet: word.questionSet,
+        dictionary: action.payload,
+        numberOfQuestions: action.payload.length
       }
     }
     case 'RIGHT_ANSWER': {
@@ -34,7 +21,7 @@ const ReducerQuestion = (state = {}, action) => {
       const rightTemp = dictionaryRight.shift()
       // increment mValue
       dictionaryRight.push(rightTemp)
-      console.log(dictionaryRight)
+      console.log('dictionaryRight', dictionaryRight)
       return { ...state,
         dictionary: dictionaryRight,
         german: dictionaryRight[0].german,
@@ -47,7 +34,7 @@ const ReducerQuestion = (state = {}, action) => {
       const wrongTemp = dictionaryWrong.shift()
       // decrement mValue
       dictionaryWrong.splice(2, 0, wrongTemp)
-      console.log(dictionaryWrong)
+      console.log('dictionaryWrong',dictionaryWrong)
       return {
         ...state,
         dictionary: dictionaryWrong,

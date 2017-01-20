@@ -1,7 +1,7 @@
 {
-  "name": "thinkful-full-stack-template",
+  "name": "spaced-repitition-learning",
   "version": "0.0.1",
-  "description": "A full-stack template for Thinkful students",
+  "description": "Full-stack React-Redux-MongoDB app with Google AuthO authentication and client/server architecture.",
   "main": "index.js",
   "main:server": "server/index.js",
   "main:client": "client/js/index.js",

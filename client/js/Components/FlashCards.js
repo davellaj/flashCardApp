@@ -13,15 +13,21 @@ class FlashCards extends Component {
   }
 
   componentDidMount() {
-    this.props.fetchQuestions()
-      .then(() => console.log('fetchQuestions data: ', this.props.questions));
     this.props.fetchUser()
+      .then(() => this.props.fetchQuestions())
+      .then(() => {
+        console.log('fetchQuestions data: ', this.props.questions)
+        console.log('fetchUser data: ', this.props.user)
+      });
   }
 
   onFormSubmit(event) {
     event.preventDefault();
     if (this.state.term === this.props.english) {
       this.props.rightAnswer();
+      if (this.props.numberOfQuestions >= this.props.correctSessionAnswers) {
+        console.log('Session Complete: ', this.props.numberOfQuestions)
+      }
     } else {
       this.props.wrongAnswer();
     }
@@ -33,13 +39,14 @@ class FlashCards extends Component {
   }
 
   render() {
+    console.log('State Questions: ', this.props)
     return (
       <div>
         < Link to='/'>Home</Link>
         <form onSubmit={this.onFormSubmit}>
           <h3>Translate the word</h3>
           <div>
-            <span>Ray: </span>
+            <span>German: </span>
             {this.props.german}
           </div>
           <div>
@@ -54,13 +61,19 @@ class FlashCards extends Component {
           </div>
           <button
             type="submit"
-            className="btn btn-sm btn-outline-primary"
+            className="btn btn-sm btn-primary nextQuestion"
           >
             Submit
           </button>
+          <button className="btn btn-sm btn-info saveSession">Save Session</button>
         </form>
-        <div>
-          <p>Session Score: <strong>{this.props.user.correctSessionAnswers}</strong></p>
+        <div className="currentSession">
+          <p className="sessionLevel">
+            {this.props.numberOfQuestions} Questions - Level: {this.props.level} Set: {this.props.questionSet}
+          </p>
+          <p className="sessionScore">
+            Session Score: <strong>{this.props.user.correctSessionAnswers}</strong>
+          </p>
         </div>
       </div>
     )
@@ -71,6 +84,9 @@ const mapStateToProps = (state) => {
   return {
     german: state.questions.german,
     english: state.questions.english,
+    level: state.questions.level,
+    questionSet: state.questions.questionSet,
+    numberOfQuestions: state.questions.numberOfQuestions,
     user: state.user
   }
 }
