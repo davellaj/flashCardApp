@@ -2,6 +2,37 @@ import 'isomorphic-fetch'
 import cookie from 'react-cookie'
 
 /*******************************************
+      Save User Question Set State
+********************************************/
+// export const SAVE_SESSION = 'SAVE_SESSION'
+// export const saveSession = () => ({
+//   type: SAVE_SESSION
+// })
+
+export const saveUserSession = (data) => dispatch => {
+  console.log('Action: saveUserSession called')
+  const url = 'api/saveSession'
+  return fetch(url, {
+    headers: {
+      // 'Authorization': `Bearer ${cookie.load('accessToken')}`,
+      'Content-Type': 'application/json'
+    },
+    method: 'PUT',
+    body: JSON.stringify({ data })
+  })
+  .then(response => {
+    if (!response.ok) {
+      const error = new Error(response.statusText)
+      error.response = response
+      throw error
+    }
+    return response;
+  })
+  .then(response => console.log(response.json()))
+}
+
+
+/*******************************************
      GET BASIC SET OF QUESTIONS
 ********************************************/
 export const GET_QUESTIONS = 'GET_QUESTIONS';

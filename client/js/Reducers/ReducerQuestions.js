@@ -1,6 +1,6 @@
 import actions from '../Actions';
 
-const ReducerQuestion = (state = {}, action) => {
+const ReducerQuestion = (state = { dictionary: {} }, action) => {
   switch (action.type) {
     case 'GET_QUESTIONS': {
       console.log('ReducerQuestion getQuestions', action.payload)
