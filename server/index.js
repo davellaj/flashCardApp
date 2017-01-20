@@ -20,7 +20,7 @@ console.log(`Server running in ${process.env.NODE_ENV} mode`);
 
 const app = express();
 const jsonParser = bodyParser.json();
-
+//const router = express.Router(); //only used if you split up file for auth routes
 app.use(express.static(process.env.CLIENT_PATH));
 app.use(jsonParser);
 
@@ -33,25 +33,22 @@ passport.use(new GoogleStrategy({
     callbackURL: 'http://localhost:8080/auth/google/callback'
   },
   (accessToken, refreshToken, profile, cb) => {
-    //console.log('access token ', accessToken);
-    //console.log('profile ', profile);
-        // return cb(null, profile);
     User.findOneAndUpdate({ googleId: profile.id },
           {
             $set: {
               googleId: profile.id,
               name: profile.name,
               userName: profile.displayName,
-              // email: profile.emails[0].value,
+              email: profile.emails[0].value,
               accessToken
             }
           },
-          { upsert: true, new: true })
+          { upsert: true, new: true, setDefaultsOnInsert: true })
           .then(user => {
-            console.log('user authenticated ', user);
               cb(null, user);
-          }).catch(() => {
-              console.log('catch error');
+          })
+          .catch((err) => {
+              console.log('catch error', err);
           });
     }
   ));
@@ -70,11 +67,9 @@ app.get('/auth/google/callback',
 // access token for jamie 'ya29.GlvYA8JmSJ0fxe7K-95ThhJaeyezRaHXSVONQgiC_xOyoYnWB7MJJS2RfQO4oscbPr2Aq_SHzgvMxTmaMJWLidvPdeBI7DVkOwLmjLUCFTr-hgAMk3aRuPzUisnY'
 // passport bearer Strategy
 
-const router = express.Router();
 
 passport.use(new BearerStrategy(
   (accessToken, done) => {
-    console.log(accessToken);
     User.findOne({
       accessToken
     }).then(user => {
@@ -92,6 +87,19 @@ app.get('/api/questions', passport.authenticate('bearer', { session: false }),
     res.json(req.user);
   });
 
+// get from dictionary words with level X and questionSet X with authentication needed
+app.get('/api/dictionary', passport.authenticate('bearer', { session: false }),
+  (req, res) => {
+  // eventually will need to make level and questionSet values variables
+    Dictionary.find({ level: 1, questionSet: 1 })
+    .then(wordObj => {
+        return res.status(200).json(wordObj);
+    })
+    .catch(err => {
+        res.status(500).json(err);
+    });
+});
+
 // get for logged in users database info
 // return the userObj that has the users array of words and correctCount
 app.get('/flashCards/:userId', (req, res) => {
@@ -107,18 +115,6 @@ app.get('/flashCards/:userId', (req, res) => {
     });
 });
 
-// get from dictionary words with level X and questionSet X
-app.get('/dictionary', (req, res) => {
-  // eventually will need to make level and questionSet values variables
-    Dictionary.find({ level: 1, questionSet: 1 })
-    .then(wordObj => {
-        // console.log('wordObj: ', wordObj)
-        return res.status(200).json(wordObj);
-    })
-    .catch(err => {
-        res.status(500).json(err);
-    });
-});
 
 //Update a users word and mValue
 app.put('/flashCards/:userId', (req, res) => {
@@ -200,6 +196,7 @@ app.post('/dictionary', (req, res) => {
     word.questionSet = req.body.questionSet;
     word.english = req.body.english;
     word.german = req.body.german;
+    word.mValue = 1;
 
     word.save((err, word) => {
         if (err) {
