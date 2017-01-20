@@ -8,10 +8,9 @@ const userSchema = new Schema({
   accessToken: String,
   userName: { type: String, required: true },
   email: Object,
-  level: Number,
-  questionSet: Number,
-  correctCount: Number,
-  words: Array,
+  level: { type: Number, default: 1 },
+  questionSet: { type: Number, default: 1 },
+  correctCount: { type: Number, default: 0 },
   dictionary: Array
 });
 
