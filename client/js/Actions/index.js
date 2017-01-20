@@ -1,4 +1,5 @@
 import 'isomorphic-fetch'
+import cookie from 'react-cookie'
 
 export const GET_QUESTIONS = 'GET_QUESTIONS';
 export const getQuestions = (data) => ({
@@ -7,10 +8,15 @@ export const getQuestions = (data) => ({
 })
 
 // test userId: 587fafb3843ba0158d29ceef
-export const fetchQuestions = userId => dispatch => {
+export const fetchQuestions = () => dispatch => {
   console.log('dispatch fetchQuestions');
-  const url = '/dictionary'
-  return fetch(url)
+
+  const url = '/api/questions'
+  return fetch(url, {
+    headers: {
+      'Authorization': `Bearer ${cookie.load('accessToken')}`
+    }
+  })
   .then(response => {
     if (!response.ok) {
       const error = new Error(response.statusText)

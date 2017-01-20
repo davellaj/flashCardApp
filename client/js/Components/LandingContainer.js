@@ -10,9 +10,8 @@ class LandingContainer extends Component {
     return (
       <div>
         <h1>German</h1>
-        <button>Login</button>
         <div>
-          <Link to='question'>FlashCards</Link>
+          <div><a className="btn btn-default btn-lg"  href="/auth/google">Alt Login</a></div>
         </div>
       </div>
     )
@@ -20,3 +19,5 @@ class LandingContainer extends Component {
 }
 
 export default LandingContainer
+
+// <Link className="btn btn-default btn-lg" to='/auth/google'>Login</Link>
