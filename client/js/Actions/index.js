@@ -7,8 +7,35 @@ export const getQuestions = (data) => ({
   payload: data
 })
 
-// test userId: 587fafb3843ba0158d29ceef
 export const fetchQuestions = () => dispatch => {
+  const url = '/api/dictionary'
+  return fetch(url, {
+    headers: {
+      'Authorization': `Bearer ${cookie.load('accessToken')}`
+    }
+  })
+  .then(response => {
+    if (!response.ok) {
+      const error = new Error(response.statusText)
+      error.response = response
+      throw error
+    }
+    return response;
+  })
+  .then(response => response.json())
+  // .then(data => console.log('fetch: ', data))
+  .then(data => dispatch(getQuestions(data)))
+  .catch(error => console.log(error))
+}
+
+export const GET_USER = 'GET_USER';
+export const getUser = (data) => ({
+  type: GET_USER,
+  payload: data
+})
+
+// test userId: 587fafb3843ba0158d29ceef
+export const fetchUser = () => dispatch => {
   console.log('dispatch fetchQuestions');
 
   const url = '/api/questions'
@@ -27,7 +54,7 @@ export const fetchQuestions = () => dispatch => {
   })
   .then(response => response.json())
   // .then(data => console.log('fetch: ', data))
-  .then(data => dispatch(getQuestions(data)))
+  .then(data => dispatch(getUser(data)))
   .catch(error => console.log(error))
 }
 

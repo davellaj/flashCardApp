@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router'
-import { fetchQuestions, rightAnswer, wrongAnswer } from '../Actions'
+import { fetchQuestions, fetchUser, rightAnswer, wrongAnswer } from '../Actions'
 
 class FlashCards extends Component {
 
@@ -13,7 +13,9 @@ class FlashCards extends Component {
   }
 
   componentDidMount() {
-    this.props.fetchQuestions(this.props.user.userId);
+    this.props.fetchQuestions()
+      .then(() => console.log('fetchQuestions data: ', this.props.questions));
+    this.props.fetchUser()
   }
 
   onFormSubmit(event) {
@@ -75,7 +77,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
  return {
-   fetchQuestions: userId => dispatch(fetchQuestions(userId)),
+   fetchQuestions: () => dispatch(fetchQuestions()),
+   fetchUser: () => dispatch(fetchUser()),
    rightAnswer: () => dispatch(rightAnswer()),
    wrongAnswer: () => dispatch(wrongAnswer())
    }
