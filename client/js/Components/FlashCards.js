@@ -41,23 +41,26 @@ class FlashCards extends Component {
   render() {
     console.log('State Questions: ', this.props)
     return (
-      <div>
+      <div className="quizContainer container">
         < Link to='/'>Home</Link>
+      <h3 className="quizContainerTitle">Translate the word</h3>
         <form onSubmit={this.onFormSubmit}>
-          <h3>Translate the word</h3>
-          <div>
-            <span>German: </span>
-            {this.props.german}
-          </div>
-          <div>
-            <span>English: </span>
-            <input
-              type="text"
-              placeholder="enter the English word"
-              className="form-control"
-              value={this.state.term}
-              onChange={this.onInputChange}
-            />
+          <div className="row">
+
+            <div className="col-md-4">
+              <span>German: </span>
+              {this.props.german}
+            </div>
+            <div className="col-md-8">
+              <span>English: </span>
+              <input
+                type="text"
+                placeholder="enter the English word"
+                className="form-control"
+                value={this.state.term}
+                onChange={this.onInputChange}
+              />
+            </div>
           </div>
           <button
             type="submit"
