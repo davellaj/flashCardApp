@@ -10,6 +10,7 @@ const userSchema = new Schema({
   email: Object,
   level: { type: Number, default: 1 },
   questionSet: { type: Number, default: 1 },
+  sessionComplete: { type: Boolean, default: false },
   correctCount: { type: Number, default: 0 },
   dictionary: Array
 });

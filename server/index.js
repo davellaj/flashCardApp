@@ -100,6 +100,44 @@ app.get('/api/dictionary', passport.authenticate('bearer', { session: false }),
     });
 });
 
+// get from dictionary words with level X and questionSet X with authentication needed
+app.get('/api/questionSet/:userId/:sessionComplete', passport.authenticate('bearer', { session: false }),
+  (req, res) => {
+    const userId = req.params.userId;
+    const sessionComplete = req.params.sessionComplete;
+
+    if (sessionComplete === 'false') {
+      User.findById(userId)
+      .then(userObj => {
+          return Dictionary.find({ level: userObj.level, questionSet: userObj.questionSet });
+      })
+      .then(wordObj => {
+          return res.status(200).json(wordObj);
+      })
+      .catch(err => {
+          return res.status(500).json(err);
+      });
+    } else if (sessionComplete === 'true') {
+        User.findById(userId)
+        .then(userObj => {
+          // add logic for if questionSet is > 5 increment level by 1 and set questionSet to 1
+          const newQuestionSet = userObj.questionSet + 1;
+          return User.findByIdAndUpdate(userId,
+          { $set: { questionSet: newQuestionSet } }, { new: true });
+        })
+        .then(updateObj => {
+            return Dictionary.find({ level: updateObj.level, questionSet: updateObj.questionSet });
+        })
+        .then(wordObj => {
+            return res.status(200).json(wordObj);
+        })
+        .catch(err => {
+            return res.status(500).json(err);
+        });
+    }
+});
+
+
 // get for logged in users database info
 // return the userObj that has the users array of words and correctCount
 app.get('/flashCards/:userId', (req, res) => {
