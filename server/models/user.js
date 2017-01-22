@@ -12,7 +12,7 @@ const userSchema = new Schema({
   questionSet: { type: Number, default: 1 },
   sessionComplete: { type: Boolean, default: false },
   correctCount: { type: Number, default: 0 },
-  dictionary: Array
+  dictionary: { type: Array, default: [] }
 });
 
 const User = mongoose.model('user', userSchema);

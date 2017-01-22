@@ -140,23 +140,19 @@ if (sessionComplete == 'false') {
 });
 
 //Update a users dictionary
-app.put('/flashCards/:userId', (req, res) => {
-    // could potentialy do algorithm computation here but for now will assume
-    // it is done on the frontend and frontend sends in body of put request
-    // level and set the user has accomplished after their session
-
-    //find logged in user then update level and questionSet
-    User.findByIdAndUpdate(req.params.userId,
-    { $set: { level: req.body.level, questionSet: req.body.questionSet } }, { new: true })
+app.put('/api/saveSession', (req, res) => {
+  const userId = '588238daa493b874a31cd593';
+    //find logged in user then update dictionary
+    User.findByIdAndUpdate(userId,
+    { dictionary: req.body.dictionary }, { new: true })
     .then(updateObj => {
+        console.log(updateObj)
         return res.status(200).json(updateObj);
     })
     .catch(err => {
         res.status(500).json(err);
     });
 });
-    //in body send the wordId req.body.word and the new mValue req.body.mValue
-    // User.findOneAndUpdate({_id: req.params.id}, $set: {req.body.word})
 
 // get for logged in users database info
 // return the userObj that has the users array of words and correctCount
