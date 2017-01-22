@@ -64,16 +64,12 @@ app.get('/auth/google/callback',
     res.redirect('/#/question');
   });
 
-// access token for jamie 'ya29.GlvYA8JmSJ0fxe7K-95ThhJaeyezRaHXSVONQgiC_xOyoYnWB7MJJS2RfQO4oscbPr2Aq_SHzgvMxTmaMJWLidvPdeBI7DVkOwLmjLUCFTr-hgAMk3aRuPzUisnY'
 // passport bearer Strategy
-
-
 passport.use(new BearerStrategy(
   (accessToken, done) => {
     User.findOne({
       accessToken
     }).then(user => {
-      console.log('this is bearer strategy ', user);
       done(null, user, { scope: 'read' });
     }).catch(err => {
       done(err, null);
@@ -81,9 +77,9 @@ passport.use(new BearerStrategy(
   }
 ));
 
+// get users collection with authenticated route
 app.get('/api/users', passport.authenticate('bearer', { session: false }),
   (req, res) => {
-    console.log('inside router.get accessing req.user ', req.user);
     res.json(req.user);
   });
 
@@ -100,24 +96,30 @@ app.get('/api/dictionary', passport.authenticate('bearer', { session: false }),
     });
 });
 
+// API/QUESTIONS/:userId/:sessionComplete
 // get from dictionary words with level X and questionSet X with authentication needed
 app.get('/api/questionSet/:userId/:sessionComplete', passport.authenticate('bearer', { session: false }),
   (req, res) => {
     const userId = req.params.userId;
     const sessionComplete = req.params.sessionComplete;
-    console.log('sessionComplete: ', sessionComplete)
-    if (sessionComplete == 'false') {
-      User.findById(userId)
-      .then(userObj => {
-          return Dictionary.find({ level: userObj.level, questionSet: userObj.questionSet });
+    // console.log('sessionComplete: ', sessionComplete);
+
+if (sessionComplete == 'false') {
+    User.findById(userId)
+    .then(userObj => {
+      if (userObj.dictionary.length !== 0) {
+          console.log(userObj.dictionary.length);
+          return userObj.dictionary;
+        }
+      return Dictionary.find({ level: userObj.level, questionSet: userObj.questionSet });
       })
-      .then(wordObj => {
-          return res.status(200).json(wordObj);
-      })
-      .catch(err => {
-          return res.status(500).json(err);
-      });
-    } else if (sessionComplete == 'true') {
+        .then(wordObj => {
+            return res.status(200).json(wordObj);
+        })
+        .catch(err => {
+            return res.status(500).json(err);
+        });
+      } else if (sessionComplete == 'true') {
         User.findById(userId)
         .then(userObj => {
           // add logic for if questionSet is > 5 increment level by 1 and set questionSet to 1
@@ -137,6 +139,24 @@ app.get('/api/questionSet/:userId/:sessionComplete', passport.authenticate('bear
     }
 });
 
+//Update a users dictionary
+app.put('/flashCards/:userId', (req, res) => {
+    // could potentialy do algorithm computation here but for now will assume
+    // it is done on the frontend and frontend sends in body of put request
+    // level and set the user has accomplished after their session
+
+    //find logged in user then update level and questionSet
+    User.findByIdAndUpdate(req.params.userId,
+    { $set: { level: req.body.level, questionSet: req.body.questionSet } }, { new: true })
+    .then(updateObj => {
+        return res.status(200).json(updateObj);
+    })
+    .catch(err => {
+        res.status(500).json(err);
+    });
+});
+    //in body send the wordId req.body.word and the new mValue req.body.mValue
+    // User.findOneAndUpdate({_id: req.params.id}, $set: {req.body.word})
 
 // get for logged in users database info
 // return the userObj that has the users array of words and correctCount
