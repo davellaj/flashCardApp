@@ -96,30 +96,23 @@ app.get('/api/dictionary', passport.authenticate('bearer', { session: false }),
     });
 });
 
-// API/QUESTIONS/:userId/:sessionComplete
 // get from dictionary words with level X and questionSet X with authentication needed
 app.get('/api/questionSet/:userId/:sessionComplete', passport.authenticate('bearer', { session: false }),
   (req, res) => {
     const userId = req.params.userId;
     const sessionComplete = req.params.sessionComplete;
-    // console.log('sessionComplete: ', sessionComplete);
-
-if (sessionComplete == 'false') {
-    User.findById(userId)
-    .then(userObj => {
-      if (userObj.dictionary.length !== 0) {
-          console.log(userObj.dictionary.length);
-          return userObj.dictionary;
-        }
-      return Dictionary.find({ level: userObj.level, questionSet: userObj.questionSet });
+    if (sessionComplete == 'false') {
+      User.findById(userId)
+      .then(userObj => {
+          return Dictionary.find({ level: userObj.level, questionSet: userObj.questionSet });
       })
-        .then(wordObj => {
-            return res.status(200).json(wordObj);
-        })
-        .catch(err => {
-            return res.status(500).json(err);
-        });
-      } else if (sessionComplete == 'true') {
+      .then(wordObj => {
+          return res.status(200).json(wordObj);
+      })
+      .catch(err => {
+          return res.status(500).json(err);
+      });
+    } else if (sessionComplete == 'true') {
         User.findById(userId)
         .then(userObj => {
           // add logic for if questionSet is > 5 increment level by 1 and set questionSet to 1
