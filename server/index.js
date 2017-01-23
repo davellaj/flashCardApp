@@ -107,7 +107,10 @@ app.get('/api/questionSet/:userId/:sessionComplete', passport.authenticate('bear
     if (sessionComplete == 'false') {
       User.findById(userId)
       .then(userObj => {
-          return Dictionary.find({ level: userObj.level, questionSet: userObj.questionSet });
+        if (userObj.level > 5) {
+          return Dictionary.find({});
+        }
+        return Dictionary.find({ level: userObj.level, questionSet: userObj.questionSet });
       })
       .then(wordObj => {
           return res.status(200).json(wordObj);
@@ -151,10 +154,12 @@ app.get('/api/questionSet/:userId/:sessionComplete', passport.authenticate('bear
 app.put('/api/saveSession', (req, res) => {
   // const userId = '588238daa493b874a31cd593';
     //find logged in user then update dictionary
+    // console.log(req.body);
     User.findByIdAndUpdate(req.body.userId,
     { dictionary: req.body.dictionary }, { new: true })
     .then(updateObj => {
-      return res.status(200).json(updateObj);
+      console.log(`updateObj: ${updateObj}`)
+      return res.status(200).json(updateObj.dictionary);
     })
     .catch(err => {
         res.status(500).json(err);

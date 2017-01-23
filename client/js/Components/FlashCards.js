@@ -41,8 +41,8 @@ class FlashCards extends Component {
 
   onSaveSession(event) {
     event.preventDefault();
-    console.log('onSaveSession button clicked')
-    this.props.saveUserSession(this.props.dictionary);
+    // console.log('onSaveSession button clicked', this.props.dictionary)
+    this.props.saveUserSession({ dictionary: this.props.dictionary, userId: this.props.user.userId });
   }
 
   onInputChange(event) {

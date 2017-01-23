@@ -18,7 +18,7 @@ export const saveUserSession = (data) => dispatch => {
       'Content-Type': 'application/json'
     },
     method: 'PUT',
-    body: JSON.stringify({ data })
+    body: JSON.stringify(data )
   })
   .then(response => {
     if (!response.ok) {
@@ -28,7 +28,7 @@ export const saveUserSession = (data) => dispatch => {
     }
     return response;
   })
-  .then(response => console.log(response.json()))
+  .then(response => console.log('saveUserSession: ', response.json()))
 }
 
 
