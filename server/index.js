@@ -104,12 +104,21 @@ app.get('/api/questionSet/:userId/:sessionComplete', passport.authenticate('bear
     const userId = req.params.userId;
     const sessionComplete = req.params.sessionComplete;
 
+// if the session is false/not complete we want to send back the dictionary words containing the users
+// current qquestionSet and level
     if (sessionComplete == 'false') {
       User.findById(userId)
       .then(userObj => {
+        // if the userObj has items saved in their dictionary array, which means they saved a session,
+        // then return the current dictionary array they are working on
+        if (userObj.dictionary.length !== 0) {
+          return userObj.dictionary;
+        }
+        // if the user is currently on a level greater than 5 (our last level), send back all the dictionary words to review
         if (userObj.level > 5) {
           return Dictionary.find({});
         }
+        // else return the dictionary words from the user's current questionsSet and level
         return Dictionary.find({ level: userObj.level, questionSet: userObj.questionSet });
       })
       .then(wordObj => {
@@ -119,6 +128,7 @@ app.get('/api/questionSet/:userId/:sessionComplete', passport.authenticate('bear
           return res.status(500).json(err);
       });
     } else if (sessionComplete == 'true') {
+      // could add in future if a user has session true, we can save their new dictionary array to their user
         User.findById(userId)
         .then(userObj => {
           let newLevel;
