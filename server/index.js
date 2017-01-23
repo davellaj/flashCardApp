@@ -161,14 +161,12 @@ app.get('/api/questionSet/:userId/:sessionComplete', passport.authenticate('bear
 });
 
 //Update a users dictionary
-app.put('/api/saveSession', (req, res) => {
-  // const userId = '588238daa493b874a31cd593';
-    //find logged in user then update dictionary
-    // console.log(req.body);
+app.put('/api/saveSession', passport.authenticate('bearer', { session: false }),
+ (req, res) => {
+    //find logged in user then update dictionary and return the updated user dictionary
     User.findByIdAndUpdate(req.body.userId,
     { dictionary: req.body.dictionary }, { new: true })
     .then(updateObj => {
-      console.log(`updateObj: ${updateObj}`)
       return res.status(200).json(updateObj.dictionary);
     })
     .catch(err => {

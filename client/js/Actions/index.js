@@ -14,7 +14,7 @@ export const saveUserSession = (data) => dispatch => {
   const url = 'api/saveSession'
   return fetch(url, {
     headers: {
-      // 'Authorization': `Bearer ${cookie.load('accessToken')}`,
+      'Authorization': `Bearer ${cookie.load('accessToken')}`,
       'Content-Type': 'application/json'
     },
     method: 'PUT',
