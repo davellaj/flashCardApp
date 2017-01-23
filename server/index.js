@@ -64,16 +64,12 @@ app.get('/auth/google/callback',
     res.redirect('/#/question');
   });
 
-// access token for jamie 'ya29.GlvYA8JmSJ0fxe7K-95ThhJaeyezRaHXSVONQgiC_xOyoYnWB7MJJS2RfQO4oscbPr2Aq_SHzgvMxTmaMJWLidvPdeBI7DVkOwLmjLUCFTr-hgAMk3aRuPzUisnY'
 // passport bearer Strategy
-
-
 passport.use(new BearerStrategy(
   (accessToken, done) => {
     User.findOne({
       accessToken
     }).then(user => {
-      console.log('this is bearer strategy ', user);
       done(null, user, { scope: 'read' });
     }).catch(err => {
       done(err, null);
@@ -81,9 +77,9 @@ passport.use(new BearerStrategy(
   }
 ));
 
+// get users collection with authenticated route
 app.get('/api/users', passport.authenticate('bearer', { session: false }),
   (req, res) => {
-    console.log('inside router.get accessing req.user ', req.user);
     res.json(req.user);
   });
 
@@ -101,15 +97,29 @@ app.get('/api/dictionary', passport.authenticate('bearer', { session: false }),
 });
 
 // get from dictionary words with level X and questionSet X with authentication needed
+// problems with edge cases: if there isn't a card in the dictionary collection or at that level then
+// the dictionary returns an error. How do you check against Dictionary.find coming back empty?
 app.get('/api/questionSet/:userId/:sessionComplete', passport.authenticate('bearer', { session: false }),
   (req, res) => {
     const userId = req.params.userId;
     const sessionComplete = req.params.sessionComplete;
-    console.log('sessionComplete: ', sessionComplete)
+
+// if the session is false/not complete we want to send back the dictionary words containing the users
+// current qquestionSet and level
     if (sessionComplete == 'false') {
       User.findById(userId)
       .then(userObj => {
-          return Dictionary.find({ level: userObj.level, questionSet: userObj.questionSet });
+        // if the userObj has items saved in their dictionary array, which means they saved a session,
+        // then return the current dictionary array they are working on
+        if (userObj.dictionary.length !== 0) {
+          return userObj.dictionary;
+        }
+        // if the user is currently on a level greater than 5 (our last level), send back all the dictionary words to review
+        if (userObj.level > 5) {
+          return Dictionary.find({});
+        }
+        // else return the dictionary words from the user's current questionsSet and level
+        return Dictionary.find({ level: userObj.level, questionSet: userObj.questionSet });
       })
       .then(wordObj => {
           return res.status(200).json(wordObj);
@@ -118,15 +128,28 @@ app.get('/api/questionSet/:userId/:sessionComplete', passport.authenticate('bear
           return res.status(500).json(err);
       });
     } else if (sessionComplete == 'true') {
+      // could add in future if a user has session true, we can save their new dictionary array to their user
         User.findById(userId)
         .then(userObj => {
-          // add logic for if questionSet is > 5 increment level by 1 and set questionSet to 1
-          const newQuestionSet = userObj.questionSet + 1;
+          let newLevel;
+          let newQuestionSet;
+
+          if (userObj.questionSet >= 5) {
+            newLevel = userObj.level + 1;
+            newQuestionSet = 1;
+            return User.findByIdAndUpdate(userId,
+            { $set: { questionSet: newQuestionSet, level: newLevel } }, { new: true });
+          }
+          newQuestionSet = userObj.questionSet + 1;
           return User.findByIdAndUpdate(userId,
           { $set: { questionSet: newQuestionSet } }, { new: true });
         })
         .then(updateObj => {
-            return Dictionary.find({ level: updateObj.level, questionSet: updateObj.questionSet });
+          if (updateObj.level > 5) {
+            // extend edge case on frontend if level > 5 to say cards complete and change text from level and set to "review"
+            return Dictionary.find({});
+          }
+          return Dictionary.find({ level: updateObj.level, questionSet: updateObj.questionSet });
         })
         .then(wordObj => {
             return res.status(200).json(wordObj);
@@ -137,6 +160,21 @@ app.get('/api/questionSet/:userId/:sessionComplete', passport.authenticate('bear
     }
 });
 
+//Update a users dictionary
+app.put('/api/saveSession', (req, res) => {
+  // const userId = '588238daa493b874a31cd593';
+    //find logged in user then update dictionary
+    // console.log(req.body);
+    User.findByIdAndUpdate(req.body.userId,
+    { dictionary: req.body.dictionary }, { new: true })
+    .then(updateObj => {
+      console.log(`updateObj: ${updateObj}`)
+      return res.status(200).json(updateObj.dictionary);
+    })
+    .catch(err => {
+        res.status(500).json(err);
+    });
+});
 
 // get for logged in users database info
 // return the userObj that has the users array of words and correctCount

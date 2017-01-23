@@ -1,7 +1,14 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router'
-import { fetchQuestions, fetchQuestionSet, fetchUser, rightAnswer, wrongAnswer, toggleSessionComplete } from '../Actions'
+import { fetchQuestions,
+        fetchQuestionSet,
+        fetchUser,
+        rightAnswer,
+        saveUserSession,
+        toggleSessionComplete,
+        wrongAnswer
+      } from '../Actions'
 
 class FlashCards extends Component {
 
@@ -10,24 +17,18 @@ class FlashCards extends Component {
     this.state = { term: '' }
     this.onFormSubmit = this.onFormSubmit.bind(this)
     this.onInputChange = this.onInputChange.bind(this)
+    this.onSaveSession = this.onSaveSession.bind(this)
   }
 
   componentDidMount() {
     this.props.fetchUser()
-      // .then(() => this.props.fetchQuestions())
       .then(() => this.props.fetchQuestionSet(this.props.user.userId, this.props.user.sessionComplete))
-      // .then(() => {
-      //   console.log('fetchQuestions data: ', this.props.questions)
-      //   console.log('fetchUser data: ', this.props.user)
-      // })
   }
 
   onFormSubmit(event) {
     event.preventDefault();
     if (this.state.term === this.props.english) {
       this.props.rightAnswer();
-      console.log('numberOfQuestions: ', this.props.numberOfQuestions)
-      console.log('correctSessionAnswers: ', this.props.user.correctSessionAnswers)
       if ((this.props.numberOfQuestions - 1) <= this.props.user.correctSessionAnswers) {
         this.props.toggleSessionComplete()
         this.props.fetchQuestionSet(this.props.user.userId, true)
@@ -36,6 +37,12 @@ class FlashCards extends Component {
       this.props.wrongAnswer();
     }
     this.setState({ term: '' });
+  }
+
+  onSaveSession(event) {
+    event.preventDefault();
+    // console.log('onSaveSession button clicked', this.props.dictionary)
+    this.props.saveUserSession({ dictionary: this.props.dictionary, userId: this.props.user.userId });
   }
 
   onInputChange(event) {
@@ -76,7 +83,6 @@ class FlashCards extends Component {
             </button>
             <button className="btn btn-sm btn-info saveSession">Save Session</button>
           </div>
-
         </form>
         <div className="currentSession">
           <p className="sessionLevel">
@@ -86,18 +92,25 @@ class FlashCards extends Component {
             Session Score: <strong>{this.props.user.correctSessionAnswers}</strong>
           </p>
         </div>
+        <div>
+          <button type='submit' onClick={this.onSaveSession}>
+            Test Save Session
+          </button>
+        </div>
       </div>
     )
   }
 }
 
 const mapStateToProps = (state) => {
+  console.log('state: ', state)
   return {
     german: state.questions.german,
     english: state.questions.english,
     level: state.questions.level,
     questionSet: state.questions.questionSet,
     numberOfQuestions: state.questions.numberOfQuestions,
+    dictionary: state.questions.dictionary,
     user: state.user
   }
 }
@@ -109,6 +122,7 @@ const mapDispatchToProps = (dispatch) => {
    fetchUser: () => dispatch(fetchUser()),
    rightAnswer: () => dispatch(rightAnswer()),
    wrongAnswer: () => dispatch(wrongAnswer()),
+   saveUserSession: (dictionary) => dispatch(saveUserSession(dictionary)),
    toggleSessionComplete: () => dispatch(toggleSessionComplete())
    }
 }
