@@ -97,10 +97,13 @@ app.get('/api/dictionary', passport.authenticate('bearer', { session: false }),
 });
 
 // get from dictionary words with level X and questionSet X with authentication needed
+// problems with edge cases: if there isn't a card in the dictionary collection or at that level then
+// the dictionary returns an error. How do you check against Dictionary.find coming back empty?
 app.get('/api/questionSet/:userId/:sessionComplete', passport.authenticate('bearer', { session: false }),
   (req, res) => {
     const userId = req.params.userId;
     const sessionComplete = req.params.sessionComplete;
+
     if (sessionComplete == 'false') {
       User.findById(userId)
       .then(userObj => {
@@ -115,13 +118,25 @@ app.get('/api/questionSet/:userId/:sessionComplete', passport.authenticate('bear
     } else if (sessionComplete == 'true') {
         User.findById(userId)
         .then(userObj => {
-          // add logic for if questionSet is > 5 increment level by 1 and set questionSet to 1
-          const newQuestionSet = userObj.questionSet + 1;
+          let newLevel;
+          let newQuestionSet;
+
+          if (userObj.questionSet >= 5) {
+            newLevel = userObj.level + 1;
+            newQuestionSet = 1;
+            return User.findByIdAndUpdate(userId,
+            { $set: { questionSet: newQuestionSet, level: newLevel } }, { new: true });
+          }
+          newQuestionSet = userObj.questionSet + 1;
           return User.findByIdAndUpdate(userId,
           { $set: { questionSet: newQuestionSet } }, { new: true });
         })
         .then(updateObj => {
-            return Dictionary.find({ level: updateObj.level, questionSet: updateObj.questionSet });
+          if (updateObj.level > 5) {
+            // extend edge case on frontend if level > 5 to say cards complete and change text from level and set to "review"
+            return Dictionary.find({});
+          }
+          return Dictionary.find({ level: updateObj.level, questionSet: updateObj.questionSet });
         })
         .then(wordObj => {
             return res.status(200).json(wordObj);
