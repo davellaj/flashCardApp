@@ -8,11 +8,11 @@ class LandingContainer extends Component {
   render() {
     console.log('LandingContainer');
     return (
-      <div>
-        <div>
-          <div className="googleButton"><a href="/auth/google"><img className="googleButtonImg" src="../../assets/googleButton.png" /></a></div>
+        <div className="googleButton">
+          <a href="/auth/google">
+            <img className="googleButtonImg" src="../../assets/googleButton.png" />
+          </a>
         </div>
-      </div>
     );
   }
 }
