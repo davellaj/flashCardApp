@@ -30,7 +30,7 @@ mongoose.Promise = global.Promise;
 passport.use(new GoogleStrategy({
     clientID: '1038166029559-ta5qgkk3f266l4dn1tjiqt733mteek69.apps.googleusercontent.com',
     clientSecret: '-F_e6UnBiwcHpQNFtd81qdxG',
-    callbackURL: 'http://localhost:8080/auth/google/callback'
+    callbackURL: '/auth/google/callback'
   },
   (accessToken, refreshToken, profile, cb) => {
     User.findOneAndUpdate({ googleId: profile.id },
