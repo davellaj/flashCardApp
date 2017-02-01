@@ -80,7 +80,7 @@ passport.use(new BearerStrategy(
 // get users collection with authenticated route
 app.get('/api/users', passport.authenticate('bearer', { session: false }),
   (req, res) => {
-    res.json(req.user);
+    res.status(200).json(req.user);
   });
 
 // get from dictionary words with level X and questionSet X with authentication needed
