@@ -4,6 +4,7 @@
 
 ## Design
 
+### Features
 * Question Sets are downloaded to the client
   - potentially could be accessed later without internet connectivity
   - Limits calls to server/backend
@@ -12,6 +13,12 @@
 * Design allows 
    - multiple level users (eg. Level 1 is beginner, Level 2 is intermediate)
    - multiple question sets with each level
+
+### Algorithm - App uses a simplified Spaced Repetition algorithm 
+* Right Answer are moved to end of stack
+* Wrong Answers are moved back 3 positions
+* User continues until all are answered correct
+* Then is presented with the next question set
 
 
 
