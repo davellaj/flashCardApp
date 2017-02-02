@@ -27,8 +27,8 @@ Built by Nick Coleman and Jamie Davella
 * User continues until all are answered correct
 * Then is presented with the next question set
 
-(http://res.cloudinary.com/coleman/image/upload/c_scale,w_200/v1486050956/SRQuestionSet_ufisow.png)
-(http://res.cloudinary.com/coleman/image/upload/c_scale,w_200/v1486050956/SRReact-Redux_lyvqi6.png)
+![](http://res.cloudinary.com/coleman/image/upload/c_scale,w_200/v1486050956/SRQuestionSet_ufisow.png)
+![](http://res.cloudinary.com/coleman/image/upload/c_scale,w_200/v1486050956/SRReact-Redux_lyvqi6.png)
 
 
 ## Getting started
