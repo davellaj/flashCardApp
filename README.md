@@ -1,6 +1,5 @@
-# Thinkful Full Stack Template
-
-A template for developing and deploying full stack JavaScript apps.  Supports ES2015 on the client and server-side.
+# Spaced Repetition
+![alt text](http://res.cloudinary.com/coleman/image/upload/v1486049755/spacedRepititionLearning_nwyoit.png "Spaced Repetition Learning")
 
 ## Getting started
 
