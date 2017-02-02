@@ -2,6 +2,7 @@
 ![alt text](http://res.cloudinary.com/coleman/image/upload/v1486049755/spacedRepititionLearning_nwyoit.png "Spaced Repetition Learning")
 
 Built by Nick Coleman and Jamie Davella
+
 [Spaced Repetition Demo](https://germanrepitition.herokuapp.com "Learn German")
 
 ## Design
