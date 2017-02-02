@@ -21,7 +21,10 @@ console.log(`Server running in ${process.env.NODE_ENV} mode`);
 const app = express();
 const jsonParser = bodyParser.json();
 //const router = express.Router(); //only used if you split up file for auth routes
-app.use(express.static(process.env.CLIENT_PATH));
+if (process.env.CLIENT_PATH) {
+  app.use(express.static(process.env.CLIENT_PATH));
+}
+
 app.use(jsonParser);
 
 mongoose.Promise = global.Promise;
@@ -287,25 +290,44 @@ app.post('/dictionary', (req, res) => {
     });
 });
 
-function runServer() {
+let server;
+
+function runServer(callback) {
     return new Promise((resolve, reject) => {
         mongoose.connect(DATABASE_URL, err => {
-            if (err) {
-                return reject(err);
+            if (err && callback) {
+              console.log(err);
+              return callback(err);
             }
-        app.listen(PORT, HOST, (err) => {
-            if (err) {
-                console.error(err);
-                reject(err);
+          })
+        server = app.listen(PORT, HOST, () => {
+            console.log(`Your app is listening on port ${PORT}`);
+            if (callback) {
+              callback();
             }
+            resolve(server);
+          }).on('error', err => {
+              reject(err)
+          });
+        })
+      }
 
-            const host = HOST || 'localhost';
-            console.log(`Listening on ${host}:${PORT}`);
+    function closeServer() {
+      return new Promise((resolve, reject) => {
+        console.log('Closing server');
+        server.close(err => {
+          if (err) {
+            reject(err);
+            // so we don't also call `resolve()`
+            return;
+          }
+          resolve();
         });
-    });
-});
+  });
 }
 
 if (require.main === module) {
     runServer();
 }
+
+export { app, runServer, closeServer };

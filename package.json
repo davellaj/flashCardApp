@@ -8,7 +8,7 @@
   "scripts": {
     "start": "[ \"$NODE_ENV\" = \"production\" ] && npm run serve:server:production || npm run serve:server:dev",
     "dev": "run-p watch serve:server:dev",
-    "test": "mocha --recursive",
+    "test": "mocha --recursive --require babel-polyfill --compilers js:babel-register",
     "repl": "babel-node",
     "build": "run-s build:*",
     "clean": "rm -rf build",
