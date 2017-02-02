@@ -1,12 +1,26 @@
 # Spaced Repetition
 ![alt text](http://res.cloudinary.com/coleman/image/upload/v1486049755/spacedRepititionLearning_nwyoit.png "Spaced Repetition Learning")
 
+
+## Design
+
+* Question Sets are downloaded to the client
+** potentially could be accessed later without internet connectivity
+** Limits calls to server/backend
+* Client calls Server for Question Sets and is responsible for managing the Question Sets
+* Server is responsible for database management/queries and authentication only
+Design allows 
+** multiple level users (eg. Level 1 is beginner, Level 2 is intermediate)
+** multiple question sets with each level
+
+
+
 ## Getting started
 
 ### Setting up a project
 
 * Move into your projects directory: `cd ~/YOUR_PROJECTS_DIRECTORY`
-* Clone this repository: `git clone https://github.com/oampo/thinkful-full-stack-template YOUR_PROJECT_NAME`
+* Clone this repository: `git clone https://github.com/davellaj/flashCardApp YOUR_PROJECT_NAME`
 * Move into the project directory: `cd YOUR_PROJECT_NAME`
 * Install the dependencies: `npm install`
 * Create a new repo on GitHub: https://github.com/new
@@ -33,41 +47,4 @@
     ├── client  Client tests
     └── server  Server tests
 ```
-
-## Deployment
-
-Requires the [Heroku CLI client](https://devcenter.heroku.com/articles/heroku-command-line).
-
-### Setting up the project on Heroku
-
-* Move into the project directory: `cd ~/YOUR_PROJECTS_DIRECTORY/YOUR_PROJECT_NAME`
-* Create the Heroku app: `heroku create PROJECT_NAME`
-* Instruct Heroku to install the development dependencies: `heroku config:set NPM_CONFIG_PRODUCTION=false`
-
-### Deploying to Heroku
-
-* Push your code to Heroku: `git push heroku master`
-
-## Continuous Integration
-
-* Add your repository to [Travis CI](https://travis-ci.org/)
-
-## Continuous Deployment
-
-Requires the [Travis CLI client](https://github.com/travis-ci/travis.rb).
-
-### Setting up CD
-
-* Add the following configuration to `.travis.yml`:
-
-    ```
-    deploy:
-      provider: heroku
-      app: YOUR_HEROKU_APP_NAME
-    ```
-* Add your Heroku API key: `travis encrypt $(heroku auth:token) --add deploy.api_key`
-
-### Deploying using CD
-
-* Push your code to GitHub: `git push origin master`
 
