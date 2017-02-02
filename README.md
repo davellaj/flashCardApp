@@ -5,13 +5,13 @@
 ## Design
 
 * Question Sets are downloaded to the client
-** potentially could be accessed later without internet connectivity
-** Limits calls to server/backend
+  - potentially could be accessed later without internet connectivity
+  - Limits calls to server/backend
 * Client calls Server for Question Sets and is responsible for managing the Question Sets
 * Server is responsible for database management/queries and authentication only
-Design allows 
-** multiple level users (eg. Level 1 is beginner, Level 2 is intermediate)
-** multiple question sets with each level
+* Design allows 
+   - multiple level users (eg. Level 1 is beginner, Level 2 is intermediate)
+   - multiple question sets with each level
 
 
 
