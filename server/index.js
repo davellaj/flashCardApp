@@ -88,19 +88,6 @@ app.get('/api/users', passport.authenticate('bearer', { session: false }),
   });
 
 // get from dictionary words with level X and questionSet X with authentication needed
-app.get('/api/dictionary', passport.authenticate('bearer', { session: false }),
-  (req, res) => {
-  // eventually will need to make level and questionSet values variables
-    Dictionary.find({ level: 1, questionSet: 1 })
-    .then(wordObj => {
-        return res.status(200).json(wordObj);
-    })
-    .catch(err => {
-        res.status(500).json(err);
-    });
-});
-
-// get from dictionary words with level X and questionSet X with authentication needed
 // problems with edge cases: if there isn't a card in the dictionary collection or at that level then
 // the dictionary returns an error. How do you check against Dictionary.find coming back empty?
 app.get('/api/questionSet/:userId/:sessionComplete', passport.authenticate('bearer', { session: false }),
@@ -113,15 +100,19 @@ app.get('/api/questionSet/:userId/:sessionComplete', passport.authenticate('bear
     if (sessionComplete == 'false') {
       User.findById(userId)
       .then(userObj => {
+        console.log('inside session complete false');
         // if the userObj has items saved in their dictionary array, which means they saved a session,
         // then return the current dictionary array they are working on
         if (userObj.dictionary.length !== 0) {
+          console.log('inside session complete false and length != 0');
           return userObj.dictionary;
         }
         // if the user is currently on a level greater than 5 (our last level), send back all the dictionary words to review
         if (userObj.level > 5) {
+          console.log('inside session complete false and level >5');
           return Dictionary.find({});
         }
+        console.log('end of session complete false');
         // else return the dictionary words from the user's current questionsSet and level
         return Dictionary.find({ level: userObj.level, questionSet: userObj.questionSet });
       })
@@ -129,6 +120,7 @@ app.get('/api/questionSet/:userId/:sessionComplete', passport.authenticate('bear
           return res.status(200).json(wordObj);
       })
       .catch(err => {
+          // console.log(err);
           return res.status(500).json(err);
       });
     } else if (sessionComplete == 'true') {
@@ -164,7 +156,7 @@ app.get('/api/questionSet/:userId/:sessionComplete', passport.authenticate('bear
     }
 });
 
-//Update a users dictionary
+//Update a users dictionary with save session button
 app.put('/api/saveSession', passport.authenticate('bearer', { session: false }),
  (req, res) => {
     //find logged in user then update dictionary and return the updated user dictionary
@@ -172,6 +164,42 @@ app.put('/api/saveSession', passport.authenticate('bearer', { session: false }),
     { dictionary: req.body.dictionary }, { new: true })
     .then(updateObj => {
       return res.status(200).json(updateObj.dictionary);
+    })
+    .catch(err => {
+        res.status(500).json(err);
+    });
+});
+
+// Currently not needed: post to add a flashCard to dictionary
+app.post('/dictionary', (req, res) => {
+    const word = new Dictionary();
+    word.level = req.body.level;
+    word.questionSet = req.body.questionSet;
+    word.english = req.body.english;
+    word.german = req.body.german;
+    word.mValue = 1;
+
+    word.save((err, word) => {
+        if (err) {
+            res.send(err);
+        }
+
+        Dictionary.find({})
+        .then(words => {
+            return res.status(200).json(words);
+        })
+        .catch(err => {
+            res.status(500).json(err);
+        });
+    });
+});
+
+// get from dictionary words with level X and questionSet X with authentication needed
+app.get('/api/dictionary', (req, res) => {
+  // eventually will need to make level and questionSet values variables
+    Dictionary.find({ level: 1, questionSet: 1 })
+    .then(wordObj => {
+        return res.status(200).json(wordObj);
     })
     .catch(err => {
         res.status(500).json(err);
@@ -267,29 +295,6 @@ app.get('/dictionary/:wordId', (req, res) => {
     });
 });
 
-// Currently not needed: post to add a flashCard to dictionary
-app.post('/dictionary', (req, res) => {
-    const word = new Dictionary();
-    word.level = req.body.level;
-    word.questionSet = req.body.questionSet;
-    word.english = req.body.english;
-    word.german = req.body.german;
-    word.mValue = 1;
-
-    word.save((err, word) => {
-        if (err) {
-            res.send(err);
-        }
-
-        Dictionary.find({})
-        .then(words => {
-            return res.status(200).json(words);
-        })
-        .catch(err => {
-            res.status(500).json(err);
-        });
-    });
-});
 
 let server;
 
