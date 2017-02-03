@@ -1,5 +1,7 @@
 //apiClientId: 1038166029559 - ta5qgkk3f266l4dn1tjiqt733mteek69.apps.googleusercontent.com
 //apiSecret: -F_e6UnBiwcHpQNFtd81qdxG
+// import env from 'node-env-file';
+import { DATABASE_URL, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, PORT } from '../config';
 
 import 'babel-polyfill';
 import express from 'express';
@@ -12,8 +14,6 @@ import passport from 'passport';
 import BearerStrategy from 'passport-http-bearer';
 
 const HOST = process.env.HOST;
-const PORT = process.env.PORT || 8080;
-const DATABASE_URL = 'mongodb://german:german@ds119748.mlab.com:19748/german';
 
 
 console.log(`Server running in ${process.env.NODE_ENV} mode`);
