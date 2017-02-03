@@ -5,11 +5,11 @@ import 'babel-polyfill';
 import express from 'express';
 import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
-import Dictionary from './models/dictionary';
-import User from './models/user';
 import GoogleStrategy from 'passport-google-oauth20';
 import passport from 'passport';
 import BearerStrategy from 'passport-http-bearer';
+import Dictionary from './models/dictionary';
+import User from './models/user';
 
 const HOST = process.env.HOST;
 const PORT = process.env.PORT || 8080;
@@ -82,6 +82,7 @@ passport.use(new BearerStrategy(
 
 // get users collection with authenticated route
 app.get('/api/users', passport.authenticate('bearer', { session: false }),
+// how to make error fail gracefully instead of relying on passport authenticate
   (req, res) => {
     res.status(200).json(req.user);
   });
@@ -299,7 +300,7 @@ function runServer(callback) {
               console.log(err);
               return callback(err);
             }
-          })
+          });
         server = app.listen(PORT, HOST, () => {
             console.log(`Your app is listening on port ${PORT}`);
             if (callback) {
@@ -307,9 +308,9 @@ function runServer(callback) {
             }
             resolve(server);
           }).on('error', err => {
-              reject(err)
+              reject(err);
           });
-        })
+        });
       }
 
     function closeServer() {
