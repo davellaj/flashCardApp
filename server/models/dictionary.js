@@ -6,8 +6,7 @@ const dictionarySchema = new Schema({
   level: { type: Number, required: true },
   questionSet: { type: Number, required: true },
   english: { type: String, required: true },
-  german: { type: String, required: true },
-  mValue: { type: Number, required: true }
+  german: { type: String, required: true }
 });
 
 const Dictionary = mongoose.model('dictionary', dictionarySchema);
