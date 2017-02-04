@@ -95,24 +95,25 @@ app.get('/api/questionSet/:userId/:sessionComplete', passport.authenticate('bear
     const userId = req.params.userId;
     const sessionComplete = req.params.sessionComplete;
 
+    // check if correct sessionComplete parameters were sent.
+    if (sessionComplete !== 'true' && sessionComplete !== 'false') {
+      return res.status(400).json({ message: 'need value true/false for sessionComplete' });
+    }
+
 // if the session is false/not complete we want to send back the dictionary words containing the users
 // current qquestionSet and level
     if (sessionComplete == 'false') {
       User.findById(userId)
       .then(userObj => {
-        console.log('inside session complete false');
         // if the userObj has items saved in their dictionary array, which means they saved a session,
         // then return the current dictionary array they are working on
         if (userObj.dictionary.length !== 0) {
-          console.log('inside session complete false and length != 0');
           return userObj.dictionary;
         }
         // if the user is currently on a level greater than 5 (our last level), send back all the dictionary words to review
         if (userObj.level > 5) {
-          console.log('inside session complete false and level >5');
           return Dictionary.find({});
         }
-        console.log('end of session complete false');
         // else return the dictionary words from the user's current questionsSet and level
         return Dictionary.find({ level: userObj.level, questionSet: userObj.questionSet });
       })
@@ -120,7 +121,9 @@ app.get('/api/questionSet/:userId/:sessionComplete', passport.authenticate('bear
           return res.status(200).json(wordObj);
       })
       .catch(err => {
-          // console.log(err);
+        if (err.kind === 'ObjectId') {
+          return res.status(400).json({ message: 'incorrect userId' });
+        }
           return res.status(500).json(err);
       });
     } else if (sessionComplete == 'true') {
@@ -151,6 +154,9 @@ app.get('/api/questionSet/:userId/:sessionComplete', passport.authenticate('bear
             return res.status(200).json(wordObj);
         })
         .catch(err => {
+          if (err.kind === 'ObjectId') {
+            return res.status(400).json({ message: 'incorrect userId' });
+          }
             return res.status(500).json(err);
         });
     }
