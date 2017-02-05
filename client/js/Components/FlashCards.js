@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Link } from 'react-router'
+import { Link } from 'react-router';
 import { fetchQuestions,
         fetchQuestionSet,
         fetchUser,
@@ -8,21 +8,21 @@ import { fetchQuestions,
         saveUserSession,
         toggleSessionComplete,
         wrongAnswer
-      } from '../Actions'
+      } from '../Actions';
 
 class FlashCards extends Component {
 
   constructor(props) {
-    super(props)
-    this.state = { term: '' }
-    this.onFormSubmit = this.onFormSubmit.bind(this)
-    this.onInputChange = this.onInputChange.bind(this)
-    this.onSaveSession = this.onSaveSession.bind(this)
+    super(props);
+    this.state = { term: '' };
+    this.onFormSubmit = this.onFormSubmit.bind(this);
+    this.onInputChange = this.onInputChange.bind(this);
+    this.onSaveSession = this.onSaveSession.bind(this);
   }
 
   componentDidMount() {
     this.props.fetchUser()
-      .then(() => this.props.fetchQuestionSet(this.props.user.userId, this.props.user.sessionComplete))
+      .then(() => this.props.fetchQuestionSet(this.props.user.userId, this.props.user.sessionComplete));
   }
 
   onFormSubmit(event) {
@@ -30,8 +30,8 @@ class FlashCards extends Component {
     if (this.state.term === this.props.english) {
       this.props.rightAnswer();
       if ((this.props.numberOfQuestions - 1) <= this.props.user.correctSessionAnswers) {
-        this.props.toggleSessionComplete()
-        this.props.fetchQuestionSet(this.props.user.userId, true)
+        this.props.toggleSessionComplete();
+        this.props.fetchQuestionSet(this.props.user.userId, true);
       }
     } else {
       this.props.wrongAnswer();
@@ -46,7 +46,7 @@ class FlashCards extends Component {
   }
 
   onInputChange(event) {
-    this.setState({ term: event.target.value })
+    this.setState({ term: event.target.value });
   }
 
   render() {
@@ -81,7 +81,7 @@ class FlashCards extends Component {
             >
               Submit
             </button>
-            <button className="btn btn-sm btn-info saveSession">Save Session</button>
+            <div className="btn btn-sm btn-info saveSession" onClick={this.onSaveSession}>Save Session</div>
           </div>
         </form>
         <div className="currentSession">
@@ -92,18 +92,13 @@ class FlashCards extends Component {
             Session Score: <strong>{this.props.user.correctSessionAnswers}</strong>
           </p>
         </div>
-        <div>
-          <button type='submit' onClick={this.onSaveSession}>
-            Test Save Session
-          </button>
-        </div>
       </div>
-    )
+    );
   }
 }
 
 const mapStateToProps = (state) => {
-  console.log('state: ', state)
+  console.log('state: ', state);
   return {
     german: state.questions.german,
     english: state.questions.english,
@@ -112,8 +107,8 @@ const mapStateToProps = (state) => {
     numberOfQuestions: state.questions.numberOfQuestions,
     dictionary: state.questions.dictionary,
     user: state.user
-  }
-}
+  };
+};
 
 const mapDispatchToProps = (dispatch) => {
  return {
@@ -124,7 +119,7 @@ const mapDispatchToProps = (dispatch) => {
    wrongAnswer: () => dispatch(wrongAnswer()),
    saveUserSession: (dictionary) => dispatch(saveUserSession(dictionary)),
    toggleSessionComplete: () => dispatch(toggleSessionComplete())
-   }
-}
+   };
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(FlashCards);
