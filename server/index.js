@@ -1,8 +1,3 @@
-//apiClientId: 1038166029559 - ta5qgkk3f266l4dn1tjiqt733mteek69.apps.googleusercontent.com
-//apiSecret: -F_e6UnBiwcHpQNFtd81qdxG
-// import env from 'node-env-file';
-import { DATABASE_URL, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, PORT } from '../config';
-
 import 'babel-polyfill';
 import express from 'express';
 import mongoose from 'mongoose';
@@ -12,9 +7,9 @@ import passport from 'passport';
 import BearerStrategy from 'passport-http-bearer';
 import Dictionary from './models/dictionary';
 import User from './models/user';
+import { DATABASE_URL, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, PORT } from '../config';
 
 const HOST = process.env.HOST;
-
 
 console.log(`Server running in ${process.env.NODE_ENV} mode`);
 
@@ -31,8 +26,8 @@ mongoose.Promise = global.Promise;
 
 //google auth
 passport.use(new GoogleStrategy({
-    clientID: '1038166029559-ta5qgkk3f266l4dn1tjiqt733mteek69.apps.googleusercontent.com',
-    clientSecret: '-F_e6UnBiwcHpQNFtd81qdxG',
+    clientID: GOOGLE_CLIENT_ID,
+    clientSecret: GOOGLE_CLIENT_SECRET,
     callbackURL: '/auth/google/callback'
   },
   (accessToken, refreshToken, profile, cb) => {
