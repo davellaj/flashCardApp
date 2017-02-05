@@ -83,8 +83,6 @@ app.get('/api/users', passport.authenticate('bearer', { session: false }),
   });
 
 // get from dictionary words with level X and questionSet X with authentication needed
-// problems with edge cases: if there isn't a card in the dictionary collection or at that level then
-// the dictionary returns an error. How do you check against Dictionary.find coming back empty?
 app.get('/api/questionSet/:userId/:sessionComplete', passport.authenticate('bearer', { session: false }),
   (req, res) => {
     const userId = req.params.userId;
@@ -95,22 +93,55 @@ app.get('/api/questionSet/:userId/:sessionComplete', passport.authenticate('bear
       return res.status(400).json({ message: 'need value true/false for sessionComplete' });
     }
 
-// if the session is false/not complete we want to send back the dictionary words containing the users
-// current qquestionSet and level
+    // if the session is false/not complete we want to send back the dictionary words containing the users
+    // current qquestionSet and level
     if (sessionComplete == 'false') {
       User.findById(userId)
       .then(userObj => {
-        // if the userObj has items saved in their dictionary array, which means they saved a session,
-        // then return the current dictionary array they are working on
-        if (userObj.dictionary.length !== 0) {
-          return userObj.dictionary;
+    // if the userObj has items saved in their dictionary array, which means they saved a session,
+    // then return the current dictionary array they are working on
+    if (userObj.dictionary.length !== 0) {
+      return userObj.dictionary;
+    }
+    // if the user is currently on a level greater than 5 (our last level), send back all the dictionary words to review
+    if (userObj.level > 5) {
+      return Dictionary.find({});
+    }
+    // else return the dictionary words from the user's current questionsSet and level
+    return Dictionary.find({ level: userObj.level, questionSet: userObj.questionSet });
+  })
+  .then(wordObj => {
+      return res.status(200).json(wordObj);
+  })
+  .catch(err => {
+    if (err.kind === 'ObjectId') {
+      return res.status(400).json({ message: 'incorrect userId' });
+    }
+      return res.status(500).json(err);
+  });
+  } else if (sessionComplete == 'true') {
+    // could add in future if a user has session true, we can save their new dictionary array to their user
+      User.findById(userId)
+      .then(userObj => {
+        let newLevel;
+        let newQuestionSet;
+
+        if (userObj.questionSet >= 5) {
+          newLevel = userObj.level + 1;
+          newQuestionSet = 1;
+          return User.findByIdAndUpdate(userId,
+          { $set: { questionSet: newQuestionSet, level: newLevel } }, { new: true });
         }
-        // if the user is currently on a level greater than 5 (our last level), send back all the dictionary words to review
-        if (userObj.level > 5) {
+        newQuestionSet = userObj.questionSet + 1;
+        return User.findByIdAndUpdate(userId,
+        { $set: { questionSet: newQuestionSet } }, { new: true });
+      })
+      .then(updateObj => {
+        if (updateObj.level > 5) {
+          // extend edge case on frontend if level > 5 to say cards complete and change text from level and set to "review"
           return Dictionary.find({});
         }
-        // else return the dictionary words from the user's current questionsSet and level
-        return Dictionary.find({ level: userObj.level, questionSet: userObj.questionSet });
+        return Dictionary.find({ level: updateObj.level, questionSet: updateObj.questionSet });
       })
       .then(wordObj => {
           return res.status(200).json(wordObj);
@@ -121,40 +152,7 @@ app.get('/api/questionSet/:userId/:sessionComplete', passport.authenticate('bear
         }
           return res.status(500).json(err);
       });
-    } else if (sessionComplete == 'true') {
-      // could add in future if a user has session true, we can save their new dictionary array to their user
-        User.findById(userId)
-        .then(userObj => {
-          let newLevel;
-          let newQuestionSet;
-
-          if (userObj.questionSet >= 5) {
-            newLevel = userObj.level + 1;
-            newQuestionSet = 1;
-            return User.findByIdAndUpdate(userId,
-            { $set: { questionSet: newQuestionSet, level: newLevel } }, { new: true });
-          }
-          newQuestionSet = userObj.questionSet + 1;
-          return User.findByIdAndUpdate(userId,
-          { $set: { questionSet: newQuestionSet } }, { new: true });
-        })
-        .then(updateObj => {
-          if (updateObj.level > 5) {
-            // extend edge case on frontend if level > 5 to say cards complete and change text from level and set to "review"
-            return Dictionary.find({});
-          }
-          return Dictionary.find({ level: updateObj.level, questionSet: updateObj.questionSet });
-        })
-        .then(wordObj => {
-            return res.status(200).json(wordObj);
-        })
-        .catch(err => {
-          if (err.kind === 'ObjectId') {
-            return res.status(400).json({ message: 'incorrect userId' });
-          }
-            return res.status(500).json(err);
-        });
-    }
+  }
 });
 
 //Update a users dictionary with save session button
@@ -178,7 +176,6 @@ app.post('/dictionary', (req, res) => {
     word.questionSet = req.body.questionSet;
     word.english = req.body.english;
     word.german = req.body.german;
-    word.mValue = 1;
 
     word.save((err, word) => {
         if (err) {
@@ -194,108 +191,6 @@ app.post('/dictionary', (req, res) => {
         });
     });
 });
-
-// get from dictionary words with level X and questionSet X with authentication needed
-app.get('/api/dictionary', (req, res) => {
-  // eventually will need to make level and questionSet values variables
-    Dictionary.find({ level: 1, questionSet: 1 })
-    .then(wordObj => {
-        return res.status(200).json(wordObj);
-    })
-    .catch(err => {
-        res.status(500).json(err);
-    });
-});
-
-// get for logged in users database info
-// return the userObj that has the users array of words and correctCount
-app.get('/flashCards/:userId', (req, res) => {
-    const userId = '587fafb3843ba0158d29ceef';
-    // User.findById(req.params.userId)
-    User.findById(userId)
-    .then(userObj => {
-        console.log(userObj);
-        return res.status(200).json(userObj);
-    })
-    .catch(err => {
-        res.status(500).json(err);
-    });
-});
-
-
-//Update a users word and mValue
-app.put('/flashCards/:userId', (req, res) => {
-    // could potentialy do algorithm computation here but for now will assume
-    // it is done on the frontend and frontend sends in body of put request
-    // level and set the user has accomplished after their session
-
-    //find logged in user then update level and questionSet
-    User.findByIdAndUpdate(req.params.userId,
-    { $set: { level: req.body.level, questionSet: req.body.questionSet } }, { new: true })
-    .then(updateObj => {
-        return res.status(200).json(updateObj);
-    })
-    .catch(err => {
-        res.status(500).json(err);
-    });
-});
-    //in body send the wordId req.body.word and the new mValue req.body.mValue
-    // User.findOneAndUpdate({_id: req.params.id}, $set: {req.body.word})
-
-//post newUser
-app.post('/users', (req, res) => {
-    Dictionary.find({ level: 1, questionSet: 1 })
-        .then(words => {
-            const learn = words.map(item => {
-                const word = {};
-
-                word[item._id] = 1;
-                return word;
-            });
-            const userObj = {
-                learn,
-                userDictionary: words
-            };
-            //console.log(learn)
-            return userObj;
-        })
-        .then(userObj => {
-            const newUser = new User();
-            newUser.userName = req.body.userName;
-            newUser.correctCount = 0;
-            newUser.level = 1;
-            newUser.questionSet = 1;
-            newUser.words = userObj.learn;
-            newUser.dictionary = userObj.userDictionary;
-
-
-            newUser.save((err, user) => {
-                if (err) {
-                    res.send(err);
-                }
-                return res.status(200).json(newUser);
-        })
-        .catch(err => {
-            res.status(500).json(err);
-        });
-    });
-});
-
-// currently not needed: get dictionary word to display
-//return word object with english and german versions of that one word
-// needs to be passed in params the wordId (which is the key of whatever
-// word the user is on in their array of words) // bad efficiency if server is
-// pinged for every render of new word???
-app.get('/dictionary/:wordId', (req, res) => {
-    Dictionary.findById(req.params.wordId)
-    .then(wordObj => {
-        return res.status(200).json(wordObj);
-    })
-    .catch(err => {
-        res.status(500).json(err);
-    });
-});
-
 
 let server;
 
