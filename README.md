@@ -32,7 +32,6 @@ Built by Nick Coleman and Jamie Davella
 ![](http://res.cloudinary.com/coleman/image/upload/v1486050956/SRQuestionSet_ufisow.png)
 ![](http://res.cloudinary.com/coleman/image/upload/v1486050956/SRReact-Redux_lyvqi6.png)
 ![](http://res.cloudinary.com/coleman/image/upload/v1486050956/SRSchema_pruyn0.png)
-![](http://res.cloudinary.com/coleman/image/upload/v1486050956/SRSchema_pruyn0.png)
 
 ## Getting started
 
