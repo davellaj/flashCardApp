@@ -56,13 +56,16 @@ Built by Nick Coleman and Jamie Davella
 
 ```
 .
-├── client      Client-side code
-│   ├── assets  Images, videos, etc.
-│   ├── js      JavaScript
-│   └── scss    SASS stylesheets
-├── server      Server-side code
-└── test        Tests
-    ├── client  Client tests
-    └── server  Server tests
+├── client            Client-side code
+│   ├── assets        Images, videos, etc.
+│   ├── js            JavaScript
+│   └── scss          SASS stylesheets
+├── server            Server-side code
+│   ├── models        Images, videos, etc.
+│     ├── user        JavaScript
+│     └── dictionary  Javascript
+└── test              Tests
+    ├── client        Client tests
+    └── server        Server tests
 ```
 
